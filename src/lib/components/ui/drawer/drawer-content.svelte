@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { ComponentProps } from "svelte";
-import type { Drawer as DrawerPrimitive } from "vaul-svelte";
+import { Drawer as DrawerPrimitive } from "vaul-svelte";
 import type { WithoutChildrenOrChild } from "$lib/utils.js";
 import type DrawerPortal from "./drawer-portal.svelte";
 

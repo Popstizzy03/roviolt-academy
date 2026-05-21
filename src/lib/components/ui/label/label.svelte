@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { Label as LabelPrimitive } from "bits-ui";
+import { Label as LabelPrimitive } from "bits-ui";
 
 let {
 	ref = $bindable(null),
