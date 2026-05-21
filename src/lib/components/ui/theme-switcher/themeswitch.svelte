@@ -1,4 +1,9 @@
 <script lang="ts">
+import SunIcon from "phosphor-svelte/lib/SunIcon";
+import MoonIcon from "phosphor-svelte/lib/MoonIcon";
+import { setMode, resetMode } from "mode-watcher";
+import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
+import { buttonVariants } from "$lib/components/ui/button/index.js";
 </script>
  
 <DropdownMenu.Root>
