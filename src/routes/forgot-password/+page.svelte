@@ -1,0 +1,60 @@
+<script lang="ts">
+import SquaresFourIcon from "phosphor-svelte/lib/SquaresFour";
+import { enhance } from "$app/forms";
+import { Button } from "$lib/components/ui/button/index.js";
+import * as Card from "$lib/components/ui/card/index.js";
+import * as Field from "$lib/components/ui/field/index.js";
+import { Input } from "$lib/components/ui/input/index.js";
+import { Spinner } from "$lib/components/ui/spinner/index.js";
+import type { ActionData } from "./$types";
+
+let { form }: { form: ActionData } = $props();
+
+let submitting = $state(false);
+</script>
+
+<div class="mx-auto flex min-h-svh max-w-sm flex-col items-center justify-center px-4">
+	<a href="/" class="mb-8 flex items-center gap-2 font-medium">
+		<div class="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
+			<SquaresFourIcon class="size-4" />
+		</div>
+		Roviolt Academy.
+	</a>
+	<Card.Root class="w-full">
+		<Card.Header>
+			<Card.Title>Forgot password</Card.Title>
+			<Card.Description>
+				Enter your email and we'll send you a link to reset your password.
+			</Card.Description>
+		</Card.Header>
+		<Card.Content>
+			<form
+				method="POST"
+				use:enhance={() => {
+					submitting = true;
+					return async ({ update }) => {
+						submitting = false;
+						update();
+					};
+				}}
+			>
+				<Field.Field>
+					<Field.Label for="email">Email</Field.Label>
+					<Input id="email" name="email" type="email" placeholder="m@example.com" required />
+				</Field.Field>
+				<Button type="submit" class="mt-4 w-full" disabled={submitting}>
+					{#if submitting}<Spinner />{/if}
+					Send reset link
+				</Button>
+			</form>
+			{#if form?.message}
+				<p class="mt-4 text-center text-sm {form.success ? 'text-green-600' : 'text-destructive'}">
+					{form.message}
+				</p>
+			{/if}
+			<p class="mt-4 text-center text-sm text-muted-foreground">
+				<a href="/signin" class="underline underline-offset-4">Back to sign in</a>
+			</p>
+		</Card.Content>
+	</Card.Root>
+</div>

@@ -1,0 +1,69 @@
+import type { Handle } from "@sveltejs/kit";
+import { sequence } from "@sveltejs/kit/hooks";
+import { svelteKitHandler } from "better-auth/svelte-kit";
+import { eq } from "drizzle-orm";
+import { building } from "$app/environment";
+import { sendInngestEvent } from "$lib/inngest/client";
+import { auth } from "$lib/server/auth";
+import { db } from "$lib/server/db";
+import { user } from "$lib/server/db/schema";
+import { sendAccountRestored } from "$lib/server/email";
+
+const handleBetterAuth: Handle = async ({ event, resolve }) => {
+	const session = await auth.api.getSession({ headers: event.request.headers });
+
+	if (session) {
+		// Ensure the admin user always has the admin role (fixes stale sessions
+		// created before the admin-by-email plugin was added).
+		if (
+			session.user.email === "kabongorabboni03@gmail.com" &&
+			session.user.role !== "admin"
+		) {
+			session.user.role = "admin";
+		}
+
+		// Auto-restore accounts during the 30-day grace period.
+		// Catches both email and OAuth users on any authenticated request.
+		if (session.user.deletionStatus === "pending_delete") {
+			await db
+				.update(user)
+				.set({ deletionStatus: "active", deletedAt: null })
+				.where(eq(user.id, session.user.id));
+
+			await sendInngestEvent("user/deletion.cancelled", {
+				userId: session.user.id,
+			});
+
+			void sendAccountRestored({ email: session.user.email });
+
+			session.user.deletionStatus = "active";
+		}
+
+		event.locals.session = session.session;
+		event.locals.user = session.user;
+	}
+
+	return svelteKitHandler({ event, resolve, auth, building });
+};
+
+const handleOnboardingGuard: Handle = async ({ event, resolve }) => {
+	const user = event.locals.user;
+	const path = event.url.pathname;
+
+	if (
+		user &&
+		!user.onboardingCompleted &&
+		!path.startsWith("/onboarding") &&
+		!path.startsWith("/signin") &&
+		!path.startsWith("/signup") &&
+		!path.startsWith("/verify-email") &&
+		!path.startsWith("/auth") &&
+		!path.startsWith("/api")
+	) {
+		return Response.redirect(`${event.url.origin}/onboarding`, 302);
+	}
+
+	return resolve(event);
+};
+
+export const handle: Handle = sequence(handleBetterAuth, handleOnboardingGuard);
