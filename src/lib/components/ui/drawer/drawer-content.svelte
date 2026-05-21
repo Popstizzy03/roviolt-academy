@@ -2,7 +2,7 @@
 import type { ComponentProps } from "svelte";
 import { Drawer as DrawerPrimitive } from "vaul-svelte";
 import type { WithoutChildrenOrChild } from "$lib/utils.js";
-import type DrawerPortal from "./drawer-portal.svelte";
+import DrawerPortal from "./drawer-portal.svelte";
 
 let {
 	ref = $bindable(null),

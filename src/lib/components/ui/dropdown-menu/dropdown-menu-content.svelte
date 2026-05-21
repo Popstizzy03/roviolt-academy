@@ -2,7 +2,7 @@
 import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
 import type { ComponentProps } from "svelte";
 import type { WithoutChildrenOrChild } from "$lib/utils.js";
-import type DropdownMenuPortal from "./dropdown-menu-portal.svelte";
+import DropdownMenuPortal from "./dropdown-menu-portal.svelte";
 
 let {
 	ref = $bindable(null),

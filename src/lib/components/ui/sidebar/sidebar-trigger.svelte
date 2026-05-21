@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { ComponentProps } from "svelte";
-import type { Button } from "$lib/components/ui/button/index.js";
+import { Button } from "$lib/components/ui/button/index.js";
 import { useSidebar } from "./context.svelte.js";
 
 let {
