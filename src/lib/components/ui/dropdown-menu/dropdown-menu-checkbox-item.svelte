@@ -1,4 +1,5 @@
 <script lang="ts">
+import { cn } from "$lib/utils.js";
 import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
 import type { Snippet } from "svelte";
 import type { WithoutChildrenOrChild } from "$lib/utils.js";

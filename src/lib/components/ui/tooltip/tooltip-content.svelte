@@ -1,4 +1,5 @@
 <script lang="ts">
+import { cn } from "$lib/utils.js";
 import { Tooltip as TooltipPrimitive } from "bits-ui";
 import type { ComponentProps } from "svelte";
 import type { WithoutChildrenOrChild } from "$lib/utils.js";

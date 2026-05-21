@@ -1,4 +1,5 @@
 <script lang="ts">
+import { cn } from "$lib/utils.js";
 import { getChartContext } from "layerchart";
 import type { Snippet } from "svelte";
 import type { HTMLAttributes } from "svelte/elements";

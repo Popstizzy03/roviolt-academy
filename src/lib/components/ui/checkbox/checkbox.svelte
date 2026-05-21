@@ -1,4 +1,5 @@
 <script lang="ts">
+import { cn } from "$lib/utils.js";
 import { Checkbox as CheckboxPrimitive } from "bits-ui";
 import type { WithoutChildrenOrChild } from "$lib/utils.js";
 
