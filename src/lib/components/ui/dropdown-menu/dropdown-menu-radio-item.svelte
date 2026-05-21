@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
+import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
 import type { WithoutChild } from "$lib/utils.js";
 
 let {
