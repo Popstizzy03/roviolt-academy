@@ -97,7 +97,7 @@ const chartData = [
 
 let timeRange = $state("90d");
 
-const _selectedLabel = $derived.by(() => {
+const selectedLabel = $derived.by(() => {
 	switch (timeRange) {
 		case "90d":
 			return "Last 3 months";
@@ -110,7 +110,7 @@ const _selectedLabel = $derived.by(() => {
 	}
 });
 
-const _filteredData = $derived(
+const filteredData = $derived(
 	chartData.filter((item) => {
 		// eslint-disable-next-line svelte/prefer-svelte-reactivity
 		const referenceDate = new Date("2024-06-30");
@@ -126,7 +126,7 @@ const _filteredData = $derived(
 	}),
 );
 
-const _chartConfig = {
+const chartConfig = {
 	desktop: { label: "Desktop", color: "var(--primary)" },
 	mobile: { label: "Mobile", color: "var(--primary)" },
 } satisfies Chart.ChartConfig;

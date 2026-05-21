@@ -11,7 +11,7 @@ const colorConfig = $derived(
 		: null,
 );
 
-const _themeContents = $derived.by(() => {
+const themeContents = $derived.by(() => {
 	if (!colorConfig?.length) return;
 
 	const themeContents = [];

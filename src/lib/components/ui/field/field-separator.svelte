@@ -13,7 +13,7 @@ let {
 	children?: Snippet;
 } = $props();
 
-const _hasContent = $derived(!!children);
+const hasContent = $derived(!!children);
 </script>
 
 <div

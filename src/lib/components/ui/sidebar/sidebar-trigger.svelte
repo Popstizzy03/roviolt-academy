@@ -13,7 +13,7 @@ let {
 	onclick?: (e: MouseEvent) => void;
 } = $props();
 
-const _sidebar = useSidebar();
+const sidebar = useSidebar();
 </script>
 
 <Button

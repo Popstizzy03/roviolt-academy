@@ -14,14 +14,14 @@ let deletePassword = $state("");
 
 function handleEnhance({ submitter }: { submitter: HTMLButtonElement | null }) {
 	let key = submitter?.value || "deleteAccount";
-	_submitting = key;
+	submitting = key;
 	return async ({ update }: { update: () => void }) => {
-		_submitting = null;
+		submitting = null;
 		update();
 	};
 }
 
-const _isPendingDelete = $derived(
+const isPendingDelete = $derived(
 	data.user?.deletionStatus === "pending_delete",
 );
 </script>

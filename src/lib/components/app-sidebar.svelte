@@ -15,7 +15,7 @@ import UsersIcon from "phosphor-svelte/lib/Users";
 import type { ComponentProps } from "svelte";
 import type * as Sidebar from "$lib/components/ui/sidebar/index.js";
 
-const _data = {
+const data = {
 	user: {
 		name: "shadcn",
 		email: "m@example.com",

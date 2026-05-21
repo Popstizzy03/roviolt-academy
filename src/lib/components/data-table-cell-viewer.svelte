@@ -3,7 +3,7 @@ import type * as Chart from "$lib/components/ui/chart/index.js";
 import { IsMobile } from "$lib/hooks/is-mobile.svelte.js";
 import type { Schema } from "./schemas.js";
 
-const _chartData = [
+const chartData = [
 	{ date: new Date("2024-01-01"), desktop: 186, mobile: 80 },
 	{ date: new Date("2024-02-01"), desktop: 305, mobile: 200 },
 	{ date: new Date("2024-03-01"), desktop: 237, mobile: 120 },
@@ -12,7 +12,7 @@ const _chartData = [
 	{ date: new Date("2024-06-01"), desktop: 214, mobile: 140 },
 ];
 
-const _chartConfig = {
+const chartConfig = {
 	desktop: {
 		label: "Desktop",
 		color: "var(--primary)",
@@ -23,13 +23,13 @@ const _chartConfig = {
 	},
 } satisfies Chart.ChartConfig;
 
-const _isMobile = new IsMobile();
+const isMobile = new IsMobile();
 
 let { item }: { item: Schema } = $props();
 
-let _type = $derived(item.type);
-let _status = $derived(item.status);
-let _reviewer = $derived(item.reviewer);
+let type = $derived(item.type);
+let status = $derived(item.status);
+let reviewer = $derived(item.reviewer);
 </script>
 
 <Drawer.Root direction={isMobile.current ? "bottom" : "right"}>

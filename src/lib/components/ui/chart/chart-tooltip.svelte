@@ -61,7 +61,7 @@ const visibleSeries = $derived(
 	chartCtx.tooltip.series.filter((s: TooltipPayload) => s.value !== undefined),
 );
 
-const _formattedLabel = $derived.by(() => {
+const formattedLabel = $derived.by(() => {
 	if (hideLabel || !visibleSeries?.length) return null;
 
 	const [item] = visibleSeries;
@@ -92,7 +92,7 @@ const _formattedLabel = $derived.by(() => {
 	return labelFormatter(value, visibleSeries);
 });
 
-const _nestLabel = $derived(visibleSeries.length === 1 && indicator !== "dot");
+const nestLabel = $derived(visibleSeries.length === 1 && indicator !== "dot");
 </script>
 
 {#snippet TooltipLabel()}

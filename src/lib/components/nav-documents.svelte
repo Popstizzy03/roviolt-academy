@@ -5,7 +5,7 @@ import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 let { items }: { items: { name: string; url: string; icon: Component }[] } =
 	$props();
 
-const _sidebar = Sidebar.useSidebar();
+const sidebar = Sidebar.useSidebar();
 </script>
 
 <Sidebar.Group class="group-data-[collapsible=icon]:hidden">

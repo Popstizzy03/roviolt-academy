@@ -13,7 +13,7 @@ let {
 	...restProps
 }: ToggleGroupPrimitive.ItemProps & ToggleVariants = $props();
 
-const _ctx = getToggleGroupCtx();
+const ctx = getToggleGroupCtx();
 </script>
 
 <ToggleGroupPrimitive.Item

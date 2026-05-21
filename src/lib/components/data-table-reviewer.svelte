@@ -4,8 +4,8 @@ import type { Schema } from "./schemas.js";
 
 let { row }: { row: Row<Schema> } = $props();
 
-const _isAssigned = $derived(row.original.reviewer !== "Assign reviewer");
-let _reviewer = $state("");
+const isAssigned = $derived(row.original.reviewer !== "Assign reviewer");
+let reviewer = $state("");
 </script>
 
 {#if isAssigned}

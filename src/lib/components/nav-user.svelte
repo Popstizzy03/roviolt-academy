@@ -4,7 +4,7 @@ import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 let { user }: { user: { name: string; email: string; avatar: string } } =
 	$props();
 
-const _sidebar = Sidebar.useSidebar();
+const sidebar = Sidebar.useSidebar();
 </script>
 
 <Sidebar.Menu>
