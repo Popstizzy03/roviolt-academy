@@ -1,9 +1,8 @@
 import { Inngest } from "inngest";
-import { INNGEST_DEV } from "$env/static/private";
 
 export const inngest = new Inngest({
 	id: "roviolt-academy",
-	isDev: INNGEST_DEV === "1",
+	isDev: process.env.INNGEST_DEV === "1",
 });
 
 export async function sendInngestEvent(
