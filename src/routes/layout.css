@@ -131,4 +131,48 @@
 	html {
 		@apply font-sans;
 	}
+
+	article h1 {
+		@apply text-3xl font-bold mb-6 mt-8;
+	}
+	article h2 {
+		@apply text-2xl font-semibold mb-4 mt-6;
+	}
+	article h3 {
+		@apply text-xl font-medium mb-3 mt-5;
+	}
+	article p {
+		@apply mb-4 leading-relaxed;
+	}
+	article ul,
+	article ol {
+		@apply mb-4 pl-6 space-y-1;
+	}
+	article ul {
+		@apply list-disc;
+	}
+	article ol {
+		@apply list-decimal;
+	}
+	article li {
+		@apply leading-relaxed;
+	}
+	article a {
+		@apply underline text-primary hover:text-primary/80;
+	}
+	article strong {
+		@apply font-semibold;
+	}
+	article hr {
+		@apply my-8 border-border;
+	}
+	article blockquote {
+		@apply border-l-4 border-border pl-4 italic text-muted-foreground my-4;
+	}
+	article code:not(pre code) {
+		@apply bg-muted rounded-none px-1.5 py-0.5 text-sm font-mono;
+	}
+	article pre {
+		@apply bg-muted rounded-none p-4 my-4 overflow-x-auto text-sm font-mono;
+	}
 }
