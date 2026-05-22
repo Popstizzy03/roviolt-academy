@@ -10,7 +10,7 @@ let {
 </script>
 
 <SheetPrimitive.Overlay
-	bind:ref
+	bind:this={ref}
 	data-slot="sheet-overlay"
 	class={cn("bg-black/10 text-xs/relaxed supports-backdrop-filter:backdrop-blur-xs fixed inset-0 z-50", className)}
 	{...restProps}

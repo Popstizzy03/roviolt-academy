@@ -5,18 +5,17 @@ import type { WithElementRef } from "$lib/utils.js";
 
 let {
 	ref = $bindable(null),
-	children,
 	class: className,
+	children,
 	...restProps
-}: WithElementRef<HTMLAttributes<HTMLLIElement>> = $props();
+}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
 </script>
 
-<li
+<div
 	bind:this={ref}
-	data-slot="sidebar-menu-sub-item"
-	data-sidebar="menu-sub-item"
-	class={cn("group/menu-sub-item relative", className)}
+	data-slot="alert-description"
+	class={cn("text-muted-foreground text-xs/relaxed [&_p]:leading-relaxed", className)}
 	{...restProps}
 >
 	{@render children?.()}
-</li>
+</div>

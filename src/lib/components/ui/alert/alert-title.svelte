@@ -8,18 +8,14 @@ let {
 	class: className,
 	children,
 	...restProps
-}: WithElementRef<
-	HTMLAttributes<HTMLUListElement>,
-	HTMLUListElement
-> = $props();
+}: WithElementRef<HTMLAttributes<HTMLHeadingElement>> = $props();
 </script>
 
-<ul
+<h5
 	bind:this={ref}
-	data-slot="sidebar-menu"
-	data-sidebar="menu"
-	class={cn("gap-0 flex w-full min-w-0 flex-col", className)}
+	data-slot="alert-title"
+	class={cn("font-semibold leading-none tracking-tight", className)}
 	{...restProps}
 >
 	{@render children?.()}
-</ul>
+</h5>

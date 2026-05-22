@@ -11,7 +11,7 @@ let {
 </script>
 
 <SeparatorPrimitive.Root
-	bind:ref
+	bind:this={ref}
 	data-slot={dataSlot}
 	class={cn(
 		"bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-px",

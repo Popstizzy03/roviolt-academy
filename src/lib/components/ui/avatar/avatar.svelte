@@ -14,7 +14,7 @@ let {
 </script>
 
 <AvatarPrimitive.Root
-	bind:ref
+	bind:this={ref}
 	bind:loadingStatus
 	data-slot="avatar"
 	data-size={size}

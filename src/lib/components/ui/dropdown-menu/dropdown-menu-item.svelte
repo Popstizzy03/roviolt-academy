@@ -1,5 +1,5 @@
 <script lang="ts">
-import { cn } from "$lib/utils.js";
+import { cn } from "\$lib/utils.js";
 import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
 
 let {
@@ -17,7 +17,7 @@ let {
 </script>
 
 <DropdownMenuPrimitive.Item
-	bind:ref
+	bind:this={ref}
 	data-slot="dropdown-menu-item"
 	data-inset={inset}
 	data-variant={variant}

@@ -44,7 +44,7 @@ export type ToggleVariants = VariantProps<typeof toggleVariants>;
 </script>
 
 <TogglePrimitive.Root
-	bind:ref
+	bind:this={ref}
 	bind:pressed
 	data-slot="toggle"
 	class={cn(toggleVariants({ variant, size }), className)}

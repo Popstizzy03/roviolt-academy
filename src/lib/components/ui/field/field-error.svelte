@@ -1,5 +1,5 @@
 <script lang="ts">
-import { cn } from "$lib/utils.js";
+import { cn } from "\$lib/utils.js";
 import type { Snippet } from "svelte";
 import type { HTMLAttributes } from "svelte/elements";
 import type { WithElementRef } from "$lib/utils.js";
@@ -15,7 +15,7 @@ let {
 	errors?: { message?: string }[];
 } = $props();
 
-const hasContent = $derived.by(() => {
+const _hasContent = $derived.by(() => {
 	// has slotted error
 	if (children) return true;
 
@@ -30,8 +30,8 @@ const hasContent = $derived.by(() => {
 	return true;
 });
 
-const isMultipleErrors = $derived(errors && errors.length > 1);
-const singleErrorMessage = $derived(
+const _isMultipleErrors = $derived(errors && errors.length > 1);
+const _singleErrorMessage = $derived(
 	errors && errors.length === 1 && errors[0]?.message,
 );
 </script>

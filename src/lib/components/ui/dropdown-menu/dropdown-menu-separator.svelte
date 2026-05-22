@@ -1,5 +1,5 @@
 <script lang="ts">
-import { cn } from "$lib/utils.js";
+import { cn } from "\$lib/utils.js";
 import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
 
 let {
@@ -10,7 +10,7 @@ let {
 </script>
 
 <DropdownMenuPrimitive.Separator
-	bind:ref
+	bind:this={ref}
 	data-slot="dropdown-menu-separator"
 	class={cn("bg-border -mx-1 h-px", className)}
 	{...restProps}

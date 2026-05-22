@@ -1,6 +1,7 @@
 <script lang="ts">
 import { cn } from "$lib/utils.js";
 import { Select as SelectPrimitive } from "bits-ui";
+import { CheckIcon } from "phosphor-svelte";
 import type { WithoutChild } from "$lib/utils.js";
 
 let {
@@ -14,7 +15,7 @@ let {
 </script>
 
 <SelectPrimitive.Item
-	bind:ref
+	bind:this={ref}
 	{value}
 	data-slot="select-item"
 	class={cn(

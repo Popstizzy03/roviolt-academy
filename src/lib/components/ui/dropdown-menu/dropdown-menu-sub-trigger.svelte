@@ -1,5 +1,5 @@
 <script lang="ts">
-import { cn } from "$lib/utils.js";
+import { cn } from "\$lib/utils.js";
 import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
 
 let {
@@ -14,7 +14,7 @@ let {
 </script>
 
 <DropdownMenuPrimitive.SubTrigger
-	bind:ref
+	bind:this={ref}
 	data-slot="dropdown-menu-sub-trigger"
 	data-inset={inset}
 	class={cn(

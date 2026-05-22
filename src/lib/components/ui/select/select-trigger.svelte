@@ -1,6 +1,7 @@
 <script lang="ts">
 import { cn } from "$lib/utils.js";
 import { Select as SelectPrimitive } from "bits-ui";
+import { CaretDownIcon } from "phosphor-svelte";
 import type { WithoutChild } from "$lib/utils.js";
 
 let {
@@ -15,7 +16,7 @@ let {
 </script>
 
 <SelectPrimitive.Trigger
-	bind:ref
+	bind:this={ref}
 	data-slot="select-trigger"
 	data-size={size}
 	class={cn(

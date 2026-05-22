@@ -1,6 +1,7 @@
 <script lang="ts">
+import Button from "$lib/components/ui/button/index.js";
+import Spinner from "$lib/components/ui/spinner/index.js";
 import { enhance } from "$app/forms";
-import { Button } from "$lib/components/ui/button/index.js";
 
 let step = $state(0);
 let displayName = $state("");

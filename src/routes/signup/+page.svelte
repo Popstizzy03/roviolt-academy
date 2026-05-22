@@ -1,5 +1,5 @@
 <script lang="ts">
-import SquaresFourIcon from "phosphor-svelte/lib/SquaresFour";
+import { SquaresFourIcon } from "phosphor-svelte";
 import SignupForm from "$lib/components/signup-form.svelte";
 import type { ActionData } from "./$types";
 

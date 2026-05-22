@@ -1,8 +1,9 @@
 <script lang="ts">
-import { enhance } from "$app/forms";
 import { Button } from "$lib/components/ui/button/index.js";
-import { Input } from "$lib/components/ui/input/index.js";
 import { Spinner } from "$lib/components/ui/spinner/index.js";
+import { Input } from "$lib/components/ui/input/index.js";
+import { cn } from "$lib/utils.js";
+import { enhance } from "$app/forms";
 import type { PageData } from "./$types";
 
 let { data, form }: { data: PageData; form: import("./$types").ActionData } =
@@ -21,9 +22,6 @@ function handleEnhance({ submitter }: { submitter: HTMLButtonElement | null }) {
 	};
 }
 
-const isPendingDelete = $derived(
-	data.user?.deletionStatus === "pending_delete",
-);
 </script>
 
 <div class="mx-auto max-w-2xl space-y-8 p-6">
@@ -41,23 +39,7 @@ const isPendingDelete = $derived(
 		</div>
 	{/if}
 
-	{#if isPendingDelete}
-		<div class="rounded-md border border-red-300 bg-red-50 p-4">
-			<h2 class="font-semibold text-red-800">Account Scheduled for Deletion</h2>
-			<p class="mt-1 text-sm text-red-600">
-				Your account is scheduled to be permanently deleted.
-				If you log in within the next 30 days, your account will be automatically restored.
-			</p>
-			<form method="POST" action="?/restoreAccount" use:enhance class="mt-4">
-				<Button variant="outline" type="submit" disabled={submitting !== null}>
-					{#if submitting === "restoreAccount"}<Spinner />{/if}
-					Restore Account
-				</Button>
-			</form>
-		</div>
-	{/if}
-
-	<div class="rounded-md border border-red-200 p-6">
+	<div class="border border-red-200 p-6">
 		<h2 class="text-lg font-semibold text-red-700">Danger Zone</h2>
 		<p class="mt-1 text-sm text-muted-foreground">
 			Once you delete your account, there is a 30-day grace period during which you can recover it

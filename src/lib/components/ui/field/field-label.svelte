@@ -1,6 +1,5 @@
 <script lang="ts">
 import { cn } from "$lib/utils.js";
-import type { ComponentProps } from "svelte";
 import { Label } from "$lib/components/ui/label/index.js";
 
 let {
@@ -8,11 +7,15 @@ let {
 	class: className,
 	children,
 	...restProps
-}: ComponentProps<typeof Label> = $props();
+}: {
+	ref?: HTMLUnknownElement | null;
+	class?: string;
+	children?: import("svelte").Snippet;
+} & { [key: string]: unknown } = $props();
 </script>
 
 <Label
-	bind:ref
+	bind:this={ref}
 	data-slot="field-label"
 	class={cn(
 		"has-data-checked:bg-primary/5 has-data-checked:border-primary/30 dark:has-data-checked:border-primary/20 dark:has-data-checked:bg-primary/10 gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:rounded-none has-[>[data-slot=field]]:border *:data-[slot=field]:p-2 group/field-label peer/field-label flex w-fit leading-snug",

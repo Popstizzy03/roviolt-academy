@@ -1,5 +1,5 @@
 <script lang="ts">
-import { cn } from "$lib/utils.js";
+import { cn } from "\$lib/utils.js";
 import { Tabs as TabsPrimitive } from "bits-ui";
 
 let {
@@ -10,7 +10,7 @@ let {
 </script>
 
 <TabsPrimitive.Content
-	bind:ref
+	bind:this={ref}
 	data-slot="tabs-content"
 	class={cn("text-xs/relaxed flex-1 outline-none", className)}
 	{...restProps}

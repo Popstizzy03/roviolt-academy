@@ -1,4 +1,9 @@
 <script lang="ts">
+import { Card } from "$lib/components/ui/card/index.js";
+import * as Table from "$lib/components/ui/table/index.js";
+import { Badge } from "$lib/components/ui/badge/index.js";
+import { Button } from "$lib/components/ui/button/index.js";
+import { enhance } from "$app/forms";
 import type { PageData } from "./$types";
 
 let { data, form }: { data: PageData; form: any } = $props();

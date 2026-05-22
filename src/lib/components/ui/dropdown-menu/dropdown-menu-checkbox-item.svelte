@@ -1,6 +1,7 @@
 <script lang="ts">
 import { cn } from "$lib/utils.js";
 import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
+import { MinusIcon, CheckIcon } from "phosphor-svelte";
 import type { Snippet } from "svelte";
 import type { WithoutChildrenOrChild } from "$lib/utils.js";
 
@@ -17,7 +18,7 @@ let {
 </script>
 
 <DropdownMenuPrimitive.CheckboxItem
-	bind:ref
+	bind:this={ref}
 	bind:checked
 	bind:indeterminate
 	data-slot="dropdown-menu-checkbox-item"

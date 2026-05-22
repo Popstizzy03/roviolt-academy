@@ -1,24 +1,19 @@
 <script lang="ts">
-import type { HTMLAttributes } from "svelte/elements";
-import { enhance } from "$app/forms";
-import { Button } from "$lib/components/ui/button/index.js";
-import {
-	Field,
-	FieldDescription,
-	FieldGroup,
-	FieldLabel,
-	FieldSeparator,
-} from "$lib/components/ui/field/index.js";
-import { Input } from "$lib/components/ui/input/index.js";
-import { Spinner } from "$lib/components/ui/spinner/index.js";
 import { cn } from "$lib/utils.js";
+import { enhance } from "$app/forms";
+import * as Field from "$lib/components/ui/field/index.js";
+import { Input } from "$lib/components/ui/input/index.js";
+import { Button } from "$lib/components/ui/button/index.js";
+import { Spinner } from "$lib/components/ui/spinner/index.js";
 
 let {
 	class: className,
 	action = "?/signUpEmail",
-	use: enhanceOptions,
 	...restProps
-}: HTMLAttributes<HTMLFormElement> & { action?: string } = $props();
+}: {
+	class?: string;
+	action?: string;
+} & { [key: string]: unknown } = $props();
 
 let submitting = $state<string | null>(null);
 

@@ -1,18 +1,16 @@
 <script lang="ts">
-import type { HTMLFormAttributes } from "svelte/elements";
-import { enhance } from "$app/forms";
-import { Button } from "$lib/components/ui/button/index.js";
+import { cn } from "$lib/utils.js";
 import {
-	Field,
-	FieldDescription,
 	FieldGroup,
+	Field,
 	FieldLabel,
 	FieldSeparator,
+	FieldDescription,
 } from "$lib/components/ui/field/index.js";
 import { Input } from "$lib/components/ui/input/index.js";
+import { Button } from "$lib/components/ui/button/index.js";
 import { Spinner } from "$lib/components/ui/spinner/index.js";
-import type { WithElementRef } from "$lib/utils.js";
-import { cn } from "$lib/utils.js";
+import { enhance } from "$app/forms";
 
 let {
 	ref = $bindable(null),
@@ -20,7 +18,12 @@ let {
 	action = "?/signInEmail",
 	use: enhanceOptions,
 	...restProps
-}: WithElementRef<HTMLFormAttributes & { action?: string }> = $props();
+}: {
+	ref?: HTMLFormElement | null;
+	class?: string;
+	action?: string;
+	use?: typeof enhance;
+} & { [key: string]: unknown } = $props();
 
 let id = crypto.randomUUID();
 

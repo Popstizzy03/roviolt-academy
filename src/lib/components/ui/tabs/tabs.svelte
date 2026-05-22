@@ -1,5 +1,5 @@
 <script lang="ts">
-import { cn } from "$lib/utils.js";
+import { cn } from "\$lib/utils.js";
 import { Tabs as TabsPrimitive } from "bits-ui";
 
 let {
@@ -11,7 +11,7 @@ let {
 </script>
 
 <TabsPrimitive.Root
-	bind:ref
+	bind:this={ref}
 	bind:value
 	data-slot="tabs"
 	class={cn("gap-2 group/tabs flex data-[orientation=horizontal]:flex-col", className)}

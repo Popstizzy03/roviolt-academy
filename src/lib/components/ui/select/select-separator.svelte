@@ -9,8 +9,8 @@ let {
 }: SeparatorPrimitive.RootProps = $props();
 </script>
 
-<Separator
-	bind:ref
+<SeparatorPrimitive.Root
+	bind:this={ref}
 	data-slot="select-separator"
 	class={cn("bg-border -mx-1 h-px pointer-events-none", className)}
 	{...restProps}

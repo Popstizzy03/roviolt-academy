@@ -1,14 +1,12 @@
-<script lang="ts">
+<script lang='ts'>
+import type { PageServerData } from "./$types";
+import { enhance } from "$app/forms";
+
+let { data }: { data: PageServerData } = $props();
 </script>
 
-<div class="flex flex-1 flex-col">
-	<div class="@container/main flex flex-1 flex-col gap-2">
-		<div class="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-			<SectionCards />
-			<div class="px-4 lg:px-6">
-				<ChartAreaInteractive />
-			</div>
-			<DataTable {data} />
-		</div>
-	</div>
-</div>
+<h1>Hi, {data.user.name}!</h1>
+<p>Your user ID is {data.user.id}.</p>
+<form method="post" action="?/signOut" use:enhance>
+        <button class="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition">Sign out</button>
+</form>

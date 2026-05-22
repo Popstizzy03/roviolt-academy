@@ -1,5 +1,5 @@
 <script>
-import { ThemeSwitcher } from "$lib/components/ui/theme-switcher/index.js";
+import { ThemeSwitcher } from "$lib/components/ui/theme-switcher";
 </script>
 
 <h1>Welcome to SvelteKit</h1>
