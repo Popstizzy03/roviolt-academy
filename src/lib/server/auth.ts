@@ -11,6 +11,14 @@ import {
 	sendResetPasswordEmail,
 	sendVerificationEmail,
 } from "$lib/server/email";
+import {
+	ac,
+	admin as adminRole,
+	student,
+	instructor,
+	editor,
+	moderator,
+} from "$lib/server/permissions";
 
 const adminByEmailPlugin = {
 	id: "admin-by-email",
@@ -122,7 +130,12 @@ export const auth = betterAuth({
 			},
 		},
 		sendResetPassword: async ({ user, url, token }) => {
-			void sendResetPasswordEmail({ email: user.email, url, token, name: user.name ?? "" });
+			void sendResetPasswordEmail({
+				email: user.email,
+				url,
+				token,
+				name: user.name ?? "",
+			});
 		},
 	},
 	socialProviders: {
@@ -152,6 +165,14 @@ export const auth = betterAuth({
 		adminByEmailPlugin,
 		admin({
 			defaultRole: "student",
+			ac,
+			roles: {
+				admin: adminRole,
+				student,
+				instructor,
+				editor,
+				moderator,
+			},
 		}),
 		sveltekitCookies(getRequestEvent),
 	],

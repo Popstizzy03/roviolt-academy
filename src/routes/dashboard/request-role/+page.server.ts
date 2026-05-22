@@ -6,7 +6,7 @@ import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async (event) => {
 	if (!event.locals.user) {
-		return redirect(302, "/login");
+		return redirect(302, "/signin");
 	}
 	return {};
 };
@@ -47,10 +47,7 @@ export const actions: Actions = {
 			});
 		}
 
-		const currentRoles = event.locals.user.role
-			? event.locals.user.role.split(",").filter(Boolean)
-			: [];
-		if (currentRoles.includes(requestedRole)) {
+		if (event.locals.user.role === requestedRole) {
 			return fail(400, {
 				message: `You already have the ${requestedRole} role`,
 			});

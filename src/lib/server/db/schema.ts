@@ -9,7 +9,7 @@ export const user = pgTable("user", {
 	image: text("image"),
 	createdAt: timestamp("createdAt").notNull(),
 	updatedAt: timestamp("updatedAt").notNull(),
-	// Integrated RBAC State System (comma-separated, e.g. "admin,instructor")
+	// Single-role RBAC (one of: student, instructor, editor, moderator, admin)
 	role: text("role").default("student"),
 	banned: boolean("banned").default(false),
 	banReason: text("banReason"),

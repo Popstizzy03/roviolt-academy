@@ -1,6 +1,11 @@
 import { fail, redirect } from "@sveltejs/kit";
 import { auth } from "$lib/server/auth";
-import type { Actions } from "./$types";
+import type { Actions, PageServerLoad } from "./$types";
+
+export const load: PageServerLoad = (event) => {
+	const token = event.url.searchParams.get("token") ?? "";
+	return { token };
+};
 
 export const actions: Actions = {
 	default: async (event) => {

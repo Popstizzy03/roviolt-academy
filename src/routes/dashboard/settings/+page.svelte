@@ -1,9 +1,9 @@
 <script lang="ts">
-import { Button } from "$lib/components/ui/button/index.js";
-import { Spinner } from "$lib/components/ui/spinner/index.js";
-import { Input } from "$lib/components/ui/input/index.js";
-import { cn } from "$lib/utils.js";
 import { enhance } from "$app/forms";
+import { Button } from "$lib/components/ui/button/index.js";
+import { Input } from "$lib/components/ui/input/index.js";
+import { Spinner } from "$lib/components/ui/spinner/index.js";
+import { cn } from "$lib/utils.js";
 import type { PageData } from "./$types";
 
 let { data, form }: { data: PageData; form: import("./$types").ActionData } =
@@ -21,7 +21,6 @@ function handleEnhance({ submitter }: { submitter: HTMLButtonElement | null }) {
 		update();
 	};
 }
-
 </script>
 
 <div class="mx-auto max-w-2xl space-y-8 p-6">

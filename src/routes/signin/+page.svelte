@@ -1,9 +1,9 @@
 <script lang="ts">
-import type { PageData } from "./$types";
 import { SquaresFourIcon } from "phosphor-svelte";
 import LoginForm from "$lib/components/login-form.svelte";
-import { Button } from "$lib/components/ui/button/index.js";
 import * as Alert from "$lib/components/ui/alert/index.js";
+import { Button } from "$lib/components/ui/button/index.js";
+import type { PageData } from "./$types";
 
 let { data, form }: { data: PageData; form: import("./$types").ActionData } =
 	$props();

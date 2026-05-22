@@ -34,7 +34,10 @@ const handleBetterAuth: Handle = async ({ event, resolve }) => {
 				userId: session.user.id,
 			});
 
-			void sendAccountRestored({ email: session.user.email, name: session.user.name ?? "" });
+			void sendAccountRestored({
+				email: session.user.email,
+				name: session.user.name ?? "",
+			});
 
 			session.user.deletionStatus = "active";
 		}

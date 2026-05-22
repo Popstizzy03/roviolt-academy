@@ -3,9 +3,6 @@ import { auth } from "$lib/server/auth";
 import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = (event) => {
-	if (!event.locals.user) {
-		return redirect(302, "/signin");
-	}
 	return { user: event.locals.user };
 };
 

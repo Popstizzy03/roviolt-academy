@@ -1,8 +1,8 @@
 <script lang="ts">
 import { DropdownMenu } from "bits-ui";
+import { resetMode, setMode } from "mode-watcher";
+import { MoonIcon, SunIcon } from "phosphor-svelte";
 import { buttonVariants } from "$lib/components/ui/button";
-import { setMode, resetMode } from "mode-watcher";
-import { SunIcon, MoonIcon } from "phosphor-svelte";
 </script>
  
 <DropdownMenu.Root>

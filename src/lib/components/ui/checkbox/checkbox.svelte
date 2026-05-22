@@ -1,8 +1,8 @@
 <script lang="ts">
-import { cn } from "$lib/utils.js";
 import { Checkbox as CheckboxPrimitive } from "bits-ui";
 import { CheckIcon, MinusIcon } from "phosphor-svelte";
 import type { WithoutChildrenOrChild } from "$lib/utils.js";
+import { cn } from "$lib/utils.js";
 
 let {
 	ref = $bindable(null),

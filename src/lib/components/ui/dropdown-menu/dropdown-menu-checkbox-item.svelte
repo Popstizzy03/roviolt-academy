@@ -1,9 +1,9 @@
 <script lang="ts">
-import { cn } from "$lib/utils.js";
 import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
-import { MinusIcon, CheckIcon } from "phosphor-svelte";
+import { CheckIcon, MinusIcon } from "phosphor-svelte";
 import type { Snippet } from "svelte";
 import type { WithoutChildrenOrChild } from "$lib/utils.js";
+import { cn } from "$lib/utils.js";
 
 let {
 	ref = $bindable(null),

@@ -1,16 +1,15 @@
 <script lang="ts">
 import { SquaresFourIcon } from "phosphor-svelte";
-import { Card } from "$lib/components/ui/card/index.js";
+import * as Card from "$lib/components/ui/card/index.js";
 import * as Field from "$lib/components/ui/field/index.js";
 import { Input } from "$lib/components/ui/input/index.js";
 import { Button } from "$lib/components/ui/button/index.js";
 import { Spinner } from "$lib/components/ui/spinner/index.js";
 import { cn } from "$lib/utils.js";
 import { enhance } from "$app/forms";
-import { page } from "$app/stores";
-import type { ActionData } from "./$types";
+import type { ActionData, PageData } from "./$types";
 
-let { form }: { form: ActionData } = $props();
+let { data, form }: { data: PageData; form: ActionData } = $props();
 
 let submitting = $state(false);
 </script>
@@ -40,7 +39,7 @@ let submitting = $state(false);
 					};
 				}}
 			>
-				<input type="hidden" name="token" value={page.url.searchParams.get("token") ?? ""} />
+				<input type="hidden" name="token" value={data.token} />
 				<Field.Field>
 					<Field.Label for="newPassword">New password</Field.Label>
 					<Input id="newPassword" name="newPassword" type="password" required minlength={8} placeholder="Min. 8 characters" />

@@ -88,7 +88,10 @@ export async function sendAccountDeletionConfirmation(params: {
 	});
 }
 
-export async function sendAccountRestored(params: { email: string; name: string }) {
+export async function sendAccountRestored(params: {
+	email: string;
+	name: string;
+}) {
 	const { email, name } = params;
 
 	const html = `
@@ -111,7 +114,10 @@ export async function sendAccountRestored(params: { email: string; name: string 
 	});
 }
 
-export async function sendWelcomeEmail(params: { email: string; name: string }) {
+export async function sendWelcomeEmail(params: {
+	email: string;
+	name: string;
+}) {
 	const { email, name } = params;
 
 	const html = `

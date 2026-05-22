@@ -1,16 +1,18 @@
 import { fail, redirect } from "@sveltejs/kit";
 import { eq } from "drizzle-orm";
+import { auth } from "$lib/server/auth";
 import { db } from "$lib/server/db";
 import * as schema from "$lib/server/db/schema";
 import type { Actions, PageServerLoad } from "./$types";
 
+type Role = "student" | "admin" | "instructor" | "editor" | "moderator";
+
 export const load: PageServerLoad = async (event) => {
 	if (!event.locals.user) {
-		return redirect(302, "/login");
+		return redirect(302, "/signin");
 	}
 
-	const currentRoles = event.locals.user.role ?? "";
-	if (!currentRoles.split(",").includes("admin")) {
+	if (event.locals.user.role !== "admin") {
 		return redirect(302, "/dashboard");
 	}
 
@@ -56,27 +58,10 @@ export const actions: Actions = {
 			return fail(404, { message: "Request not found" });
 		}
 
-		const [targetUser] = await db
-			.select()
-			.from(schema.user)
-			.where(eq(schema.user.id, userId))
-			.limit(1);
-
-		if (!targetUser) {
-			return fail(404, { message: "User not found" });
-		}
-
-		const currentRoles = targetUser.role
-			? targetUser.role.split(",").filter(Boolean)
-			: [];
-		if (!currentRoles.includes(requestedRole)) {
-			currentRoles.push(requestedRole);
-		}
-
-		await db
-			.update(schema.user)
-			.set({ role: currentRoles.join(",") })
-			.where(eq(schema.user.id, userId));
+		await auth.api.setRole({
+			body: { userId, role: requestedRole as Role },
+			headers: event.request.headers,
+		});
 
 		await db
 			.update(schema.roleRequest)

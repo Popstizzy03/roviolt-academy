@@ -23,6 +23,7 @@ export const actions: Actions = {
 				email,
 				redirectTo: "/reset-password",
 			},
+			headers: event.request.headers,
 		});
 
 		return {
