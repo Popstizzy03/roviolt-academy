@@ -2,7 +2,9 @@ import { eq } from "drizzle-orm";
 import { auth } from "$lib/server/auth";
 import { db } from "$lib/server/db";
 import { user } from "$lib/server/db/schema";
-import { inngest } from "./client";
+import { getInngest } from "./client";
+
+const inngest = getInngest();
 
 export const delayedAccountDeletion = inngest.createFunction(
 	{

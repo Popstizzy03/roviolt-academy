@@ -2,7 +2,7 @@ import { Inngest } from "inngest";
 
 let _inngest: Inngest | null = null;
 
-function getInngest() {
+export function getInngest() {
 	if (!_inngest) {
 		_inngest = new Inngest({
 			id: "roviolt-academy",
