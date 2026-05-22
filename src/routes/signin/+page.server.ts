@@ -74,6 +74,7 @@ export const actions: Actions = {
 				.select({
 					id: schema.user.id,
 					email: schema.user.email,
+					name: schema.user.name,
 					deletionStatus: schema.user.deletionStatus,
 					deletedAt: schema.user.deletedAt,
 				})
@@ -91,7 +92,7 @@ export const actions: Actions = {
 					userId: pendingUser.id,
 				});
 
-				void sendAccountRestored({ email: pendingUser.email });
+				void sendAccountRestored({ email: pendingUser.email, name: pendingUser.name ?? "" });
 
 				const deletedAt = new Date(pendingUser.deletedAt!);
 				const deletionDate = new Date(

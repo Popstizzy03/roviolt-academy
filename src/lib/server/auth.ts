@@ -122,7 +122,7 @@ export const auth = betterAuth({
 			},
 		},
 		sendResetPassword: async ({ user, url, token }) => {
-			void sendResetPasswordEmail({ email: user.email, url, token });
+			void sendResetPasswordEmail({ email: user.email, url, token, name: user.name ?? "" });
 		},
 	},
 	socialProviders: {
@@ -141,6 +141,7 @@ export const auth = betterAuth({
 				email: user.email,
 				url,
 				token,
+				name: user.name ?? "",
 			});
 		},
 		sendOnSignUp: true,

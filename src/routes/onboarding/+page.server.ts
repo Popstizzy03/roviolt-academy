@@ -2,6 +2,7 @@ import { fail, redirect } from "@sveltejs/kit";
 import { eq } from "drizzle-orm";
 import { db } from "$lib/server/db";
 import { user } from "$lib/server/db/schema";
+import { sendWelcomeEmail } from "$lib/server/email";
 import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async (event) => {
@@ -56,6 +57,11 @@ export const actions: Actions = {
 				onboardingCompleted: true,
 			})
 			.where(eq(user.id, event.locals.user.id));
+
+		void sendWelcomeEmail({
+			email: event.locals.user.email,
+			name: event.locals.user.name ?? "",
+		});
 
 		return redirect(302, "/onboarding/complete");
 	},

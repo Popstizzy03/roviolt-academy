@@ -46,6 +46,7 @@ export const actions: Actions = {
 
 		void sendAccountDeletionConfirmation({
 			email: event.locals.user.email,
+			name: event.locals.user.name ?? "",
 		});
 
 		await auth.api.signOut({
