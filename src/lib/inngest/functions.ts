@@ -30,7 +30,7 @@ export const delayedAccountDeletion = inngest.createFunction(
 			await step.run("hard-delete", async () => {
 				return await auth.api.deleteUser({
 					headers: new Headers(),
-					body: { userId },
+					body: { userId } as never,
 				});
 			});
 		}

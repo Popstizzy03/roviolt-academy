@@ -8,6 +8,7 @@ import { defineConfig } from "drizzle-kit";
  */
 const originalDns = require("node:dns");
 const origLookup = originalDns.lookup;
+// biome-ignore lint/suspicious/noExplicitAny: DNS lookup callback types are complex
 originalDns.lookup = (host: string, opts: any, cb?: any) => {
 	if (typeof opts === "function") {
 		cb = opts;

@@ -14,10 +14,10 @@ import {
 import {
 	ac,
 	admin as adminRole,
-	student,
-	instructor,
 	editor,
+	instructor,
 	moderator,
+	student,
 } from "$lib/server/permissions";
 
 const adminByEmailPlugin = {

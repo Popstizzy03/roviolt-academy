@@ -12,7 +12,7 @@ import * as schema from "./schema";
 const _require = createRequire(import.meta.url);
 const originalDns = _require("node:dns");
 const origLookup = originalDns.lookup;
-originalDns.lookup = ((host, opts, cb) => {
+originalDns.lookup = ((host: string, opts: any, cb: any) => {
 	if (typeof opts === "function") {
 		cb = opts;
 		opts = { family: 4 };

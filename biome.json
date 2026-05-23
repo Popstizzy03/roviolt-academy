@@ -5,18 +5,15 @@
 		"clientKind": "git",
 		"useIgnoreFile": true
 	},
-	"files": {
-		"ignoreUnknown": false
-	},
-	"formatter": {
-		"enabled": true,
-		"indentStyle": "tab"
-	},
 	"linter": {
 		"enabled": true,
 		"rules": {
 			"recommended": true
 		}
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab"
 	},
 	"javascript": {
 		"formatter": {
@@ -28,11 +25,19 @@
 			"tailwindDirectives": true
 		}
 	},
+	"overrides": [
+		{
+			"include": ["**/*.svelte"],
+			"linter": {
+				"enabled": false
+			}
+		}
+	],
 	"assist": {
 		"enabled": true,
 		"actions": {
 			"source": {
-				"organizeImports": "on"
+				"organizeImports": "off"
 			}
 		}
 	}

@@ -97,7 +97,10 @@ export const actions: Actions = {
 					name: pendingUser.name ?? "",
 				});
 
-				const deletedAt = new Date(pendingUser.deletedAt!);
+				if (!pendingUser.deletedAt) {
+					return fail(500, { message: "Invalid account state" });
+				}
+				const deletedAt = new Date(pendingUser.deletedAt);
 				const deletionDate = new Date(
 					deletedAt.getTime() + 30 * 24 * 60 * 60 * 1000,
 				);
