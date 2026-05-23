@@ -46,11 +46,13 @@ let { data, form }: { data: PageData; form: import("./$types").ActionData } =
 					</div>
 				{:else}
 					<LoginForm />
-					{#if data?.deleted}
-						<p class="mt-4 text-center text-sm text-muted-foreground">
+				{#if data?.deleted}
+					<div class="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-4 text-center text-sm text-amber-800">
+						<p>
 							Your account has been scheduled for deletion. You have 30 days to recover it by signing in.
 						</p>
-					{/if}
+					</div>
+				{/if}
 					{#if form?.message}
 						<p class="mt-4 text-center text-sm text-destructive">{form.message}</p>
 					{/if}
