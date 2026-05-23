@@ -1,5 +1,6 @@
 import { fail, redirect } from "@sveltejs/kit";
 import { auth } from "$lib/server/auth";
+import { forgotPasswordSchema, validateForm } from "$lib/validations";
 import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = (event) => {
@@ -12,11 +13,13 @@ export const load: PageServerLoad = (event) => {
 export const actions: Actions = {
 	default: async (event) => {
 		const formData = await event.request.formData();
-		const email = formData.get("email")?.toString() ?? "";
+		const result = await validateForm(formData, forgotPasswordSchema);
 
-		if (!email) {
-			return fail(400, { message: "Email is required" });
+		if (!result.success) {
+			return fail(400, { errors: result.errors });
 		}
+
+		const { email } = result.data;
 
 		await auth.api.requestPasswordReset({
 			body: {

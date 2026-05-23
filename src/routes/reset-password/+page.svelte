@@ -1,5 +1,5 @@
 <script lang="ts">
-import { SquaresFourIcon } from "phosphor-svelte";
+import SquaresFourIcon from "phosphor-svelte/lib/SquaresFour";
 import { resolve } from "$app/paths";
 import * as Card from "$lib/components/ui/card/index.js";
 import * as Field from "$lib/components/ui/field/index.js";

@@ -4,7 +4,19 @@ import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-	plugins: [tailwindcss(), sveltekit()],
+	plugins: [
+		tailwindcss(),
+		{
+			name: "fix-mdsvex-script",
+			enforce: "post",
+			transform(code, id) {
+				if (id.endsWith(".md") || id.endsWith(".svx")) {
+					return code.replace(/<script context="module">/g, "<script module>");
+				}
+			},
+		},
+		sveltekit(),
+	],
 	test: {
 		expect: { requireAssertions: true },
 		projects: [

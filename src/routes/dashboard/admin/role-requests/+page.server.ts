@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { auth } from "$lib/server/auth";
 import { db } from "$lib/server/db";
 import * as schema from "$lib/server/db/schema";
+import { requireCan } from "$lib/server/authorize";
 import type { Actions, PageServerLoad } from "./$types";
 
 type Role = "student" | "admin" | "instructor" | "editor" | "moderator";
@@ -12,9 +13,7 @@ export const load: PageServerLoad = async (event) => {
 		return redirect(302, "/signin");
 	}
 
-	if (event.locals.user.role !== "admin") {
-		return redirect(302, "/dashboard");
-	}
+	requireCan(event.locals.user, "user", "set-role");
 
 	const requests = await db
 		.select({

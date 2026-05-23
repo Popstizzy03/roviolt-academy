@@ -6,6 +6,8 @@ import * as Field from "$lib/components/ui/field/index.js";
 import { Input } from "$lib/components/ui/input/index.js";
 import { Spinner } from "$lib/components/ui/spinner/index.js";
 import { cn } from "$lib/utils.js";
+import EyeIcon from "phosphor-svelte/lib/Eye";
+import EyeSlashIcon from "phosphor-svelte/lib/EyeSlash";
 
 let {
 	class: className,
@@ -17,6 +19,14 @@ let {
 } & { [key: string]: unknown } = $props();
 
 let submitting = $state<string | null>(null);
+let showPassword = $state(false);
+let password = $state("");
+let breached = $state(false);
+let checkingBreach = $state(false);
+
+const minLength = 12;
+
+let lengthOk = $derived(password.length >= minLength);
 
 function handleEnhance({ submitter }: { submitter: HTMLElement | null }) {
 	const btn = submitter as HTMLButtonElement | null;
@@ -30,9 +40,43 @@ function handleEnhance({ submitter }: { submitter: HTMLElement | null }) {
 		update();
 	};
 }
+
+async function sha1(message: string): Promise<string> {
+	const encoder = new TextEncoder();
+	const data = encoder.encode(message);
+	const hashBuffer = await crypto.subtle.digest("SHA-1", data);
+	const hashArray = Array.from(new Uint8Array(hashBuffer));
+	return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function checkBreach(password: string) {
+	if (password.length < minLength) {
+		breached = false;
+		return;
+	}
+	checkingBreach = true;
+	try {
+		const hash = await sha1(password);
+		const prefix = hash.slice(0, 5);
+		const suffix = hash.slice(5).toUpperCase();
+		const res = await fetch(`https://api.pwnedpasswords.com/range/${prefix}`);
+		const text = await res.text();
+		breached = text.split("\n").some((line) => line.startsWith(suffix));
+	} catch {
+		breached = false;
+	} finally {
+		checkingBreach = false;
+	}
+}
 </script>
 
-<form action={action} method="POST" class={cn("flex flex-col gap-6", className)} use:enhance={handleEnhance} {...restProps}>
+<form
+	action={action}
+	method="POST"
+	class={cn("flex flex-col gap-6", className)}
+	use:enhance={handleEnhance}
+	{...restProps}
+>
 	<Field.Group>
 		<div class="flex flex-col items-center gap-1 text-center">
 			<h1 class="text-2xl font-bold">Create your account</h1>
@@ -53,23 +97,61 @@ function handleEnhance({ submitter }: { submitter: HTMLElement | null }) {
 		</Field.Field>
 		<Field.Field>
 			<Field.Label for="password">Password</Field.Label>
-			<Input id="password" name="password" type="password" required />
-			<Field.Description>Must be at least 8 characters long.</Field.Description>
+			<div class="relative">
+				<Input
+					bind:value={password}
+					id="password"
+					name="password"
+					type={showPassword ? "text" : "password"}
+					required
+					autocomplete="new-password"
+					onblur={() => checkBreach(password)}
+					class="pr-9"
+				/>
+				<button
+					type="button"
+					class="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center justify-center size-6 text-muted-foreground hover:text-foreground"
+					tabindex="-1"
+					onclick={() => (showPassword = !showPassword)}
+				>
+					{#if showPassword}
+						<EyeSlashIcon size={16} />
+					{:else}
+						<EyeIcon size={16} />
+					{/if}
+				</button>
+			</div>
+			<Field.Description>
+				{#if checkingBreach}
+					Checking password against known breaches&hellip;
+				{:else if breached}
+					<span class="text-destructive">This password has been exposed in a data breach. Choose a different one.</span>
+				{:else if password.length > 0 && !lengthOk}
+					At least {minLength} characters ({password.length}/{minLength})
+				{:else if lengthOk}
+					<span class="text-green-600">&#10003; {password.length}/{minLength} characters</span>
+				{:else}
+					At least {minLength} characters
+				{/if}
+			</Field.Description>
 		</Field.Field>
 		<Field.Field>
-			<Field.Label for="confirm-password">Confirm Password</Field.Label>
-			<Input id="confirm-password" name="confirmPassword" type="password" required />
-			<Field.Description>Please confirm your password.</Field.Description>
-		</Field.Field>
-		<Field.Field>
-			<Button type="submit" disabled={submitting !== null}>
+			<Button type="submit" disabled={submitting !== null || breached}>
 				{#if submitting === "email"}<Spinner />{/if}
 				Create Account
 			</Button>
 		</Field.Field>
 		<Field.Separator>Or continue with</Field.Separator>
 		<Field.Field>
-			<Button variant="outline" type="submit" formaction="?/signInSocial" name="provider" value="github" formnovalidate disabled={submitting !== null}>
+			<Button
+				variant="outline"
+				type="submit"
+				formaction="?/signInSocial"
+				name="provider"
+				value="github"
+				formnovalidate
+				disabled={submitting !== null}
+			>
 				{#if submitting === "github"}<Spinner />{/if}
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 					<path
@@ -79,7 +161,15 @@ function handleEnhance({ submitter }: { submitter: HTMLElement | null }) {
 				</svg>
 				Sign up with GitHub
 			</Button>
-			<Button variant="outline" type="submit" formaction="?/signInSocial" name="provider" value="google" formnovalidate disabled={submitting !== null}>
+			<Button
+				variant="outline"
+				type="submit"
+				formaction="?/signInSocial"
+				name="provider"
+				value="google"
+				formnovalidate
+				disabled={submitting !== null}
+			>
 				{#if submitting === "google"}<Spinner />{/if}
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 					<path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>

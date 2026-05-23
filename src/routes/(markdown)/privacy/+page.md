@@ -32,4 +32,4 @@ We may use third-party services (e.g., Resend for emails, Neon for database host
 
 ## 6. Contact
 
-For privacy-related inquiries, contact us at privacy@rovioltacademy.com.
+For privacy-related inquiries, contact us at kabongorabboni03@gmail.com.

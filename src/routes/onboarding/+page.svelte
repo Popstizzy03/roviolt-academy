@@ -15,6 +15,7 @@ let acceptedPrivacy = $state(false);
 let marketingOptIn = $state(false);
 
 function next() {
+	if (step === 0 && (!acceptedTerms || !acceptedPrivacy)) return;
 	if (step < 4) step++;
 }
 
@@ -150,7 +151,7 @@ const totalSteps = 4;
 			{/if}
 
 			{#if step < 3}
-				<Button type="button" onclick={next} class="flex-1">Continue</Button>
+				<Button type="button" onclick={next} class="flex-1" disabled={step === 0 && (!acceptedTerms || !acceptedPrivacy)}>Continue</Button>
 			{:else}
 				<Button type="submit" class="flex-1">Complete</Button>
 			{/if}

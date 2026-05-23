@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { db } from "$lib/server/db";
 import { user } from "$lib/server/db/schema";
 import { sendWelcomeEmail } from "$lib/server/email";
+import { onboardingSchema, validateForm } from "$lib/validations";
 import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async (event) => {
@@ -24,24 +25,22 @@ export const actions: Actions = {
 		}
 
 		const formData = await event.request.formData();
-		const displayName = formData.get("displayName")?.toString() ?? "";
-		const bio = formData.get("bio")?.toString() ?? "";
-		const interests = formData.get("interests")?.toString() ?? "";
-		const specialty = formData.get("specialty")?.toString() ?? "";
-		const skillLevel = formData.get("skillLevel")?.toString() ?? "";
-		const acceptedTerms = formData.get("acceptedTerms") === "true";
-		const acceptedPrivacy = formData.get("acceptedPrivacy") === "true";
-		const marketingOptIn = formData.get("marketingOptIn") === "true";
+		const result = await validateForm(formData, onboardingSchema);
 
-		if (!displayName) {
-			return fail(400, { message: "Display name is required" });
+		if (!result.success) {
+			return fail(400, { errors: result.errors });
 		}
 
-		if (!acceptedTerms || !acceptedPrivacy) {
-			return fail(400, {
-				message: "You must accept the Terms and Privacy Policy",
-			});
-		}
+		const {
+			displayName,
+			bio,
+			interests,
+			specialty,
+			skillLevel,
+			acceptedTerms,
+			acceptedPrivacy,
+			marketingOptIn,
+		} = result.data;
 
 		await db
 			.update(user)
@@ -51,8 +50,8 @@ export const actions: Actions = {
 				interests,
 				specialty,
 				skillLevel,
-				acceptedTerms,
-				acceptedPrivacy,
+				acceptedTerms: acceptedTerms === "true",
+				acceptedPrivacy: acceptedPrivacy === "true",
 				marketingOptIn,
 				onboardingCompleted: true,
 			})

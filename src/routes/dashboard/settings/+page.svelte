@@ -5,7 +5,14 @@ import { Input } from "$lib/components/ui/input/index.js";
 import { Spinner } from "$lib/components/ui/spinner/index.js";
 import type { ActionData } from "./$types";
 
-let { form }: { form: ActionData } = $props();
+let {
+	form,
+}: {
+	form: ActionData & {
+		link?: { href: string; text: string };
+		messageAfter?: string;
+	};
+} = $props();
 
 let submitting = $state<string | null>(null);
 let confirmDelete = $state(false);
@@ -26,7 +33,13 @@ function handleEnhance({ submitter }: { submitter: HTMLElement | null }) {
 
 	{#if form?.message}
 		<div class="border border-red-300 bg-red-50 p-4">
-			<p class="text-sm text-red-700">{@html form.message}</p>
+			<p class="text-sm text-red-700">
+				{form.message}
+				{#if form?.link}
+					<a href={form.link.href} class="underline">{form.link.text}</a>
+				{/if}
+				{form?.messageAfter}
+			</p>
 		</div>
 	{/if}
 

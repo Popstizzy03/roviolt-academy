@@ -13,6 +13,9 @@ const require = createRequire(import.meta.url);
 const originalDns = require("node:dns");
 const origLookup = originalDns.lookup;
 originalDns.lookup = ((host: string, opts: unknown, cb: unknown) => {
+	if (host === "localhost" || host === "127.0.0.1") {
+		return (origLookup as (...args: unknown[]) => void)(host, opts, cb);
+	}
 	if (typeof opts === "function") {
 		cb = opts;
 		opts = { family: 4 };

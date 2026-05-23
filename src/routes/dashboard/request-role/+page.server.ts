@@ -2,13 +2,23 @@ import { fail, redirect } from "@sveltejs/kit";
 import { and, eq } from "drizzle-orm";
 import { db } from "$lib/server/db";
 import * as schema from "$lib/server/db/schema";
+import { roleRequestSchema, validateForm } from "$lib/validations";
 import type { Actions, PageServerLoad } from "./$types";
+
+const roleProgression: Record<string, string[]> = {
+	student: ["instructor"],
+	instructor: ["editor", "moderator"],
+	editor: ["admin"],
+	moderator: ["admin"],
+};
 
 export const load: PageServerLoad = async (event) => {
 	if (!event.locals.user) {
 		return redirect(302, "/signin");
 	}
-	return {};
+	const availableRoles =
+		roleProgression[event.locals.user.role ?? "student"] ?? [];
+	return { availableRoles, currentRole: event.locals.user.role };
 };
 
 export const actions: Actions = {
@@ -18,15 +28,22 @@ export const actions: Actions = {
 		}
 
 		const formData = await event.request.formData();
-		const requestedRole = formData.get("requestedRole")?.toString();
+		const result = await validateForm(formData, roleRequestSchema);
 
-		if (!requestedRole) {
-			return fail(400, { message: "Please select a role" });
+		if (!result.success) {
+			return fail(400, { errors: result.errors });
 		}
 
-		const validRoles = ["instructor", "editor", "moderator"];
-		if (!validRoles.includes(requestedRole)) {
-			return fail(400, { message: "Invalid role selected" });
+		const { requestedRole } = result.data;
+		const availableRoles =
+			roleProgression[event.locals.user.role ?? "student"] ?? [];
+
+		if (!availableRoles.includes(requestedRole)) {
+			return fail(400, {
+				errors: {
+					requestedRole: ["Invalid role selected for your current level"],
+				},
+			});
 		}
 
 		const existingRequest = await db
@@ -43,13 +60,19 @@ export const actions: Actions = {
 
 		if (existingRequest.length > 0) {
 			return fail(400, {
-				message: `You already have a pending request for the ${requestedRole} role`,
+				errors: {
+					requestedRole: [
+						`You already have a pending request for the ${requestedRole} role`,
+					],
+				},
 			});
 		}
 
 		if (event.locals.user.role === requestedRole) {
 			return fail(400, {
-				message: `You already have the ${requestedRole} role`,
+				errors: {
+					requestedRole: [`You already have the ${requestedRole} role`],
+				},
 			});
 		}
 

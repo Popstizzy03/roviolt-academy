@@ -1,6 +1,6 @@
 <script lang="ts">
 import { Select as SelectPrimitive } from "bits-ui";
-import { CaretDownIcon } from "phosphor-svelte";
+import CaretDownIcon from "phosphor-svelte/lib/CaretDown";
 import type { WithoutChildrenOrChild } from "$lib/utils.js";
 import { cn } from "$lib/utils.js";
 

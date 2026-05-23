@@ -5,6 +5,7 @@ import { auth } from "$lib/server/auth";
 import { db } from "$lib/server/db";
 import { account, user } from "$lib/server/db/schema";
 import { sendAccountDeletionConfirmation } from "$lib/server/email";
+import { deleteAccountSchema, validateForm } from "$lib/validations";
 import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = (event) => {
@@ -21,25 +22,30 @@ export const actions: Actions = {
 		}
 
 		const formData = await event.request.formData();
-		const password = formData.get("password")?.toString() ?? "";
+		const result = await validateForm(formData, deleteAccountSchema);
 
+		if (!result.success) {
+			return fail(400, { errors: result.errors });
+		}
+
+		const { password } = result.data;
 		const userId = event.locals.user.id;
 
 		const [credentialAccount] = await db
 			.select()
 			.from(account)
 			.where(
-				and(
-					eq(account.providerId, "credential"),
-					eq(account.userId, userId),
-				),
+				and(eq(account.providerId, "credential"), eq(account.userId, userId)),
 			)
 			.limit(1);
 
 		if (!credentialAccount) {
 			return fail(400, {
-				message:
-					'Your account was created using Google/GitHub. Use <a href="/forgot-password" class="underline">Forgot password</a> to set a password before deleting your account.',
+				errors: {
+					password: [
+						"Your account was created using Google/GitHub. Use 'Forgot password' to set a password before deleting your account.",
+					],
+				},
 			});
 		}
 
@@ -49,7 +55,7 @@ export const actions: Actions = {
 				headers: event.request.headers,
 			});
 		} catch {
-			return fail(400, { message: "Incorrect password" });
+			return fail(400, { errors: { password: ["Incorrect password"] } });
 		}
 
 		await db

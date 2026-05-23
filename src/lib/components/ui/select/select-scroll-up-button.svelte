@@ -1,6 +1,6 @@
 <script lang="ts">
 import { Select as SelectPrimitive } from "bits-ui";
-import { CaretUpIcon } from "phosphor-svelte";
+import CaretUpIcon from "phosphor-svelte/lib/CaretUp";
 import type { WithoutChildrenOrChild } from "$lib/utils.js";
 import { cn } from "$lib/utils.js";
 

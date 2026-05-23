@@ -6,6 +6,7 @@ import { auth } from "$lib/server/auth";
 import { db } from "$lib/server/db";
 import * as schema from "$lib/server/db/schema";
 import { sendAccountRestored } from "$lib/server/email";
+import { signinSchema, validateForm } from "$lib/validations";
 import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = (event) => {
@@ -20,8 +21,13 @@ export const load: PageServerLoad = (event) => {
 export const actions: Actions = {
 	signInEmail: async (event) => {
 		const formData = await event.request.formData();
-		const email = formData.get("email")?.toString() ?? "";
-		const password = formData.get("password")?.toString() ?? "";
+		const result = await validateForm(formData, signinSchema);
+
+		if (!result.success) {
+			return fail(400, { errors: result.errors });
+		}
+
+		const { email, password } = result.data;
 
 		try {
 			const [existingUser] = await db
@@ -44,8 +50,11 @@ export const actions: Actions = {
 
 				if (!credentialAccount) {
 					return fail(400, {
-						message:
-							"This email is linked to a Google/GitHub account. Sign in with that provider, or use 'Forgot password' to set a password for email login.",
+						errors: {
+							email: [
+								"This email is linked to a Google/GitHub account. Sign in with that provider, or use 'Forgot password' to set a password for email login.",
+							],
+						},
 					});
 				}
 			}
