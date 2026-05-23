@@ -26,7 +26,7 @@ function handleEnhance({ submitter }: { submitter: HTMLElement | null }) {
 
 	{#if form?.message}
 		<div class="border border-red-300 bg-red-50 p-4">
-			<p class="text-sm text-red-700">{form.message}</p>
+			<p class="text-sm text-red-700">{@html form.message}</p>
 		</div>
 	{/if}
 

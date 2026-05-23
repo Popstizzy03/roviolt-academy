@@ -1,9 +1,9 @@
 import { fail, redirect } from "@sveltejs/kit";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { sendInngestEvent } from "$lib/inngest/client";
 import { auth } from "$lib/server/auth";
 import { db } from "$lib/server/db";
-import { user } from "$lib/server/db/schema";
+import { account, user } from "$lib/server/db/schema";
 import { sendAccountDeletionConfirmation } from "$lib/server/email";
 import type { Actions, PageServerLoad } from "./$types";
 
@@ -24,6 +24,24 @@ export const actions: Actions = {
 		const password = formData.get("password")?.toString() ?? "";
 
 		const userId = event.locals.user.id;
+
+		const [credentialAccount] = await db
+			.select()
+			.from(account)
+			.where(
+				and(
+					eq(account.providerId, "credential"),
+					eq(account.userId, userId),
+				),
+			)
+			.limit(1);
+
+		if (!credentialAccount) {
+			return fail(400, {
+				message:
+					'Your account was created using Google/GitHub. Use <a href="/forgot-password" class="underline">Forgot password</a> to set a password before deleting your account.',
+			});
+		}
 
 		try {
 			await auth.api.verifyPassword({
