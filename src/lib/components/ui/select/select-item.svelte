@@ -15,7 +15,7 @@ let {
 </script>
 
 <SelectPrimitive.Item
-	bind:this={ref}
+	bind:ref={ref}
 	{value}
 	data-slot="select-item"
 	class={cn(

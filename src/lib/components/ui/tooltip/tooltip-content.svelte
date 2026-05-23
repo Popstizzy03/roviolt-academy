@@ -1,5 +1,5 @@
 <script lang="ts">
-import { cn } from "\$lib/utils.js";
+import { cn } from "$lib/utils.js";
 import { Tooltip as TooltipPrimitive } from "bits-ui";
 import type { ComponentProps } from "svelte";
 import type { WithoutChildrenOrChild } from "$lib/utils.js";
@@ -22,7 +22,7 @@ let {
 
 <TooltipPortal {...portalProps}>
 	<TooltipPrimitive.Content
-		bind:this={ref}
+		bind:ref={ref}
 		data-slot="tooltip-content"
 		{sideOffset}
 		{side}

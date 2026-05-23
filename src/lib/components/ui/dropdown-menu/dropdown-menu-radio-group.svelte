@@ -9,7 +9,7 @@ let {
 </script>
 
 <DropdownMenuPrimitive.RadioGroup
-	bind:this={ref}
+	bind:ref={ref}
 	bind:value
 	data-slot="dropdown-menu-radio-group"
 	{...restProps}

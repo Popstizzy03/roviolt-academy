@@ -1,5 +1,6 @@
 <script lang="ts">
 import { SquaresFourIcon } from "phosphor-svelte";
+import { resolve } from "$app/paths";
 import SignupForm from "$lib/components/signup-form.svelte";
 import type { ActionData } from "./$types";
 
@@ -9,7 +10,7 @@ let { form }: { form: ActionData } = $props();
 <div class="grid min-h-svh lg:grid-cols-2">
 	<div class="flex flex-col gap-4 p-6 md:p-10">
 		<div class="flex justify-center gap-2 md:justify-start">
-			<a href="/" class="flex items-center gap-2 font-medium">
+			<a href={resolve("/")} class="flex items-center gap-2 font-medium">
 				<div
 					class="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md"
 				>

@@ -1,5 +1,6 @@
 <script lang="ts">
 import { enhance } from "$app/forms";
+import { resolve } from "$app/paths";
 import { Button } from "$lib/components/ui/button/index.js";
 import * as Field from "$lib/components/ui/field/index.js";
 import { Input } from "$lib/components/ui/input/index.js";
@@ -17,10 +18,11 @@ let {
 
 let submitting = $state<string | null>(null);
 
-function handleEnhance({ submitter }: { submitter: HTMLButtonElement | null }) {
+function handleEnhance({ submitter }: { submitter: HTMLElement | null }) {
+	const btn = submitter as HTMLButtonElement | null;
 	let key = "email";
-	if (submitter?.value) {
-		key = submitter.value;
+	if (btn?.value) {
+		key = btn.value;
 	}
 	submitting = key;
 	return async ({ update }: { update: () => void }) => {
@@ -88,7 +90,7 @@ function handleEnhance({ submitter }: { submitter: HTMLButtonElement | null }) {
 				Sign up with Google
 			</Button>
 			<Field.Description class="px-6 text-center">
-				Already have an account? <a href="/signin">Sign in</a>
+				Already have an account? <a href={resolve("/signin")}>Sign in</a>
 			</Field.Description>
 		</Field.Field>
 	</Field.Group>

@@ -3,18 +3,16 @@ import { enhance } from "$app/forms";
 import { Button } from "$lib/components/ui/button/index.js";
 import { Input } from "$lib/components/ui/input/index.js";
 import { Spinner } from "$lib/components/ui/spinner/index.js";
-import { cn } from "$lib/utils.js";
-import type { PageData } from "./$types";
+import type { ActionData } from "./$types";
 
-let { data, form }: { data: PageData; form: import("./$types").ActionData } =
-	$props();
+let { form }: { form: ActionData } = $props();
 
 let submitting = $state<string | null>(null);
 let confirmDelete = $state(false);
 let deletePassword = $state("");
 
-function handleEnhance({ submitter }: { submitter: HTMLButtonElement | null }) {
-	let key = submitter?.value || "deleteAccount";
+function handleEnhance({ submitter }: { submitter: HTMLElement | null }) {
+	let key = (submitter as HTMLButtonElement | null)?.value || "deleteAccount";
 	submitting = key;
 	return async ({ update }: { update: () => void }) => {
 		submitting = null;
@@ -29,12 +27,6 @@ function handleEnhance({ submitter }: { submitter: HTMLButtonElement | null }) {
 	{#if form?.message}
 		<div class="border border-red-300 bg-red-50 p-4">
 			<p class="text-sm text-red-700">{form.message}</p>
-		</div>
-	{/if}
-
-	{#if form?.restored}
-		<div class="rounded-md border border-green-300 bg-green-50 p-4">
-			<p class="text-sm text-green-700">Your account has been restored.</p>
 		</div>
 	{/if}
 

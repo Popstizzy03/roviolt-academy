@@ -5,4 +5,4 @@ let { ref = $bindable(null), ...restProps }: DrawerPrimitive.TriggerProps =
 	$props();
 </script>
 
-<DrawerPrimitive.Trigger bind:this={ref} data-slot="drawer-trigger" {...restProps} />
+<DrawerPrimitive.Trigger bind:ref={ref} data-slot="drawer-trigger" {...restProps} />

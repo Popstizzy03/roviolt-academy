@@ -1,5 +1,5 @@
 <script lang="ts">
-import { cn } from "\$lib/utils.js";
+import { cn } from "$lib/utils.js";
 import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
 import type { ComponentProps } from "svelte";
 import type { WithoutChildrenOrChild } from "$lib/utils.js";
@@ -21,7 +21,7 @@ let {
 
 <DropdownMenuPortal {...portalProps}>
 	<DropdownMenuPrimitive.Content
-		bind:this={ref}
+		bind:ref={ref}
 		data-slot="dropdown-menu-content"
 		{sideOffset}
 		{align}

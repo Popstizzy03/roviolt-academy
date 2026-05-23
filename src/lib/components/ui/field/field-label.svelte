@@ -15,7 +15,7 @@ let {
 </script>
 
 <Label
-	bind:this={ref}
+	bind:ref={ref}
 	data-slot="field-label"
 	class={cn(
 		"has-data-checked:bg-primary/5 has-data-checked:border-primary/30 dark:has-data-checked:border-primary/20 dark:has-data-checked:bg-primary/10 gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:rounded-none has-[>[data-slot=field]]:border *:data-[slot=field]:p-2 group/field-label peer/field-label flex w-fit leading-snug",

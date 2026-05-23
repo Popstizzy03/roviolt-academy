@@ -32,7 +32,7 @@ export type TabsListVariant = VariantProps<typeof tabsListVariants>["variant"];
 </script>
 
 <TabsPrimitive.List
-	bind:this={ref}
+	bind:ref={ref}
 	data-slot="tabs-list"
 	data-variant={variant}
 	class={cn(tabsListVariants({ variant }), className)}

@@ -16,7 +16,7 @@ let {
 </script>
 
 <SelectPrimitive.Trigger
-	bind:this={ref}
+	bind:ref={ref}
 	data-slot="select-trigger"
 	data-size={size}
 	class={cn(

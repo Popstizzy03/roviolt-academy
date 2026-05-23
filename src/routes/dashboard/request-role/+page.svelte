@@ -2,9 +2,8 @@
 import { enhance } from "$app/forms";
 import * as Button from "$lib/components/ui/button/index.js";
 import * as Card from "$lib/components/ui/card/index.js";
-import type { PageData } from "./$types";
 
-let { data, form }: { data: PageData; form: any } = $props();
+let { form }: { form: import("./$types").ActionData } = $props();
 </script>
 
 <div class="flex flex-1 flex-col p-6">

@@ -31,7 +31,7 @@ export type Side = "top" | "right" | "bottom" | "left";
 <SheetPortal {...portalProps}>
 	<SheetOverlay />
 	<SheetPrimitive.Content
-		bind:this={ref}
+		bind:ref={ref}
 		data-slot="sheet-content"
 		data-side={side}
 		class={cn(

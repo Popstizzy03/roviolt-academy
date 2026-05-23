@@ -1,5 +1,5 @@
 <script lang="ts">
-import { cn } from "\$lib/utils.js";
+import { cn } from "$lib/utils.js";
 import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
 import type { ComponentProps } from "svelte";
 
@@ -14,7 +14,7 @@ let {
 </script>
 
 <DropdownMenuPrimitive.GroupHeading
-	bind:this={ref}
+	bind:ref={ref}
 	data-slot="dropdown-menu-group-heading"
 	data-inset={inset}
 	class={cn("px-2 py-1.5 text-sm font-semibold data-[inset]:ps-8", className)}

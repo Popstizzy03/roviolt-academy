@@ -9,7 +9,7 @@ let {
 </script>
 
 <DropdownMenuPrimitive.CheckboxGroup
-	bind:this={ref}
+	bind:ref={ref}
 	bind:value
 	data-slot="dropdown-menu-checkbox-group"
 	{...restProps}

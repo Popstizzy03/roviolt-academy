@@ -1,7 +1,7 @@
 <script lang="ts">
 import { enhance } from "$app/forms";
+import { resolve } from "$app/paths";
 import { Button } from "$lib/components/ui/button/index.js";
-import { Spinner } from "$lib/components/ui/spinner/index.js";
 
 let step = $state(0);
 let displayName = $state("");
@@ -45,19 +45,19 @@ const totalSteps = 4;
 				<label class="flex items-start gap-3">
 					<input type="checkbox" bind:checked={acceptedTerms} required />
 					<span class="text-sm">
-						I accept the <a href="/terms" class="underline" target="_blank">Terms & Conditions</a>
+						I accept the <a href={resolve("/terms")} class="underline" target="_blank">Terms & Conditions</a>
 					</span>
 				</label>
 				<label class="flex items-start gap-3">
 					<input type="checkbox" bind:checked={acceptedPrivacy} required />
 					<span class="text-sm">
-						I accept the <a href="/privacy" class="underline" target="_blank">Privacy Policy</a>
+						I accept the <a href={resolve("/privacy")} class="underline" target="_blank">Privacy Policy</a>
 					</span>
 				</label>
 				<label class="flex items-start gap-3">
 					<input type="checkbox" bind:checked={marketingOptIn} />
 					<span class="text-sm">
-						I agree to receive <a href="/marketing" class="underline" target="_blank">marketing communications</a>
+						I agree to receive <a href={resolve("/marketing")} class="underline" target="_blank">marketing communications</a>
 					</span>
 				</label>
 			</div>

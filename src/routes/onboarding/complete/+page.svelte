@@ -1,6 +1,7 @@
 <script lang="ts">
 import { Button } from "$lib/components/ui/button/index.js";
 import { Spinner } from "$lib/components/ui/spinner/index.js";
+import { resolve } from "$app/paths";
 
 let navigating = $state(false);
 </script>
@@ -15,7 +16,7 @@ let navigating = $state(false);
 	<p class="mt-3 text-muted-foreground">
 		Your profile is complete. You're ready to start learning.
 	</p>
-	<a href="/dashboard" onclick={() => navigating = true}>
+	<a href={resolve("/dashboard")} onclick={() => navigating = true}>
 		<Button class="mt-8" disabled={navigating}>
 			{#if navigating}<Spinner />{/if}
 			Go to Dashboard

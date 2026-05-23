@@ -1,5 +1,5 @@
 <script lang="ts">
-import { cn } from "\$lib/utils.js";
+import { cn } from "$lib/utils.js";
 import { Select as SelectPrimitive } from "bits-ui";
 import type { ComponentProps } from "svelte";
 
@@ -12,7 +12,7 @@ let {
 </script>
 
 <SelectPrimitive.GroupHeading
-	bind:this={ref}
+	bind:ref={ref}
 	data-slot="select-group-heading"
 	class={cn("text-muted-foreground px-2 py-1.5 text-xs", className)}
 	{...restProps}

@@ -5,4 +5,4 @@ let { ref = $bindable(null), ...restProps }: DrawerPrimitive.CloseProps =
 	$props();
 </script>
 
-<DrawerPrimitive.Close bind:this={ref} data-slot="drawer-close" {...restProps} />
+<DrawerPrimitive.Close bind:ref={ref} data-slot="drawer-close" {...restProps} />

@@ -1,6 +1,7 @@
 <script lang="ts">
-import { cn } from "\$lib/utils.js";
+import { cn } from "$lib/utils.js";
 import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
+import { CaretRightIcon } from "phosphor-svelte";
 
 let {
 	ref = $bindable(null),
@@ -14,7 +15,7 @@ let {
 </script>
 
 <DropdownMenuPrimitive.SubTrigger
-	bind:this={ref}
+	bind:ref={ref}
 	data-slot="dropdown-menu-sub-trigger"
 	data-inset={inset}
 	class={cn(

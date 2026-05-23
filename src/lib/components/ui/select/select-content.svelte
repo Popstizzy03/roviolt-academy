@@ -1,9 +1,11 @@
 <script lang="ts">
-import { cn } from "\$lib/utils.js";
+import { cn } from "$lib/utils.js";
 import { Select as SelectPrimitive } from "bits-ui";
 import type { ComponentProps } from "svelte";
 import type { WithoutChild, WithoutChildrenOrChild } from "$lib/utils.js";
 import SelectPortal from "./select-portal.svelte";
+import SelectScrollUpButton from "./select-scroll-up-button.svelte";
+import SelectScrollDownButton from "./select-scroll-down-button.svelte";
 
 let {
 	ref = $bindable(null),
@@ -20,7 +22,7 @@ let {
 
 <SelectPortal {...portalProps}>
 	<SelectPrimitive.Content
-		bind:this={ref}
+		bind:ref={ref}
 		{sideOffset}
 		{preventScroll}
 		data-slot="select-content"

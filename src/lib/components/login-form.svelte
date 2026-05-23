@@ -1,5 +1,6 @@
 <script lang="ts">
 import { enhance } from "$app/forms";
+import { resolve } from "$app/paths";
 import { Button } from "$lib/components/ui/button/index.js";
 import {
 	Field,
@@ -16,23 +17,22 @@ let {
 	ref = $bindable(null),
 	class: className,
 	action = "?/signInEmail",
-	use: enhanceOptions,
 	...restProps
 }: {
 	ref?: HTMLFormElement | null;
 	class?: string;
 	action?: string;
-	use?: typeof enhance;
 } & { [key: string]: unknown } = $props();
 
 let id = crypto.randomUUID();
 
 let submitting = $state<string | null>(null);
 
-function handleEnhance({ submitter }: { submitter: HTMLButtonElement | null }) {
+function handleEnhance({ submitter }: { submitter: HTMLElement | null }) {
+	const btn = submitter as HTMLButtonElement | null;
 	let key = "email";
-	if (submitter?.value) {
-		key = submitter.value;
+	if (btn?.value) {
+		key = btn.value;
 	}
 	submitting = key;
 	return async ({ update }: { update: () => void }) => {
@@ -57,7 +57,7 @@ function handleEnhance({ submitter }: { submitter: HTMLButtonElement | null }) {
 		<Field>
 			<div class="flex items-center">
 				<FieldLabel for="password-{id}">Password</FieldLabel>
-			<a href="/forgot-password" class="ms-auto text-sm underline-offset-4 hover:underline">
+			<a href={resolve("/forgot-password")} class="ms-auto text-sm underline-offset-4 hover:underline">
 				Forgot your password?
 			</a>
 			</div>
@@ -93,7 +93,7 @@ function handleEnhance({ submitter }: { submitter: HTMLButtonElement | null }) {
 			</Button>
 			<FieldDescription class="text-center">
 				Don't have an account?
-				<a href="/signup" class="underline underline-offset-4">Sign up</a>
+				<a href={resolve("/signup")} class="underline underline-offset-4">Sign up</a>
 			</FieldDescription>
 		</Field>
 	</FieldGroup>

@@ -5,4 +5,4 @@ let { ref = $bindable(null), ...restProps }: SheetPrimitive.TriggerProps =
 	$props();
 </script>
 
-<SheetPrimitive.Trigger bind:this={ref} data-slot="sheet-trigger" {...restProps} />
+<SheetPrimitive.Trigger bind:ref={ref} data-slot="sheet-trigger" {...restProps} />

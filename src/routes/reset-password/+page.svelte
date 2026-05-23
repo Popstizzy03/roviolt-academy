@@ -1,11 +1,11 @@
 <script lang="ts">
 import { SquaresFourIcon } from "phosphor-svelte";
+import { resolve } from "$app/paths";
 import * as Card from "$lib/components/ui/card/index.js";
 import * as Field from "$lib/components/ui/field/index.js";
 import { Input } from "$lib/components/ui/input/index.js";
 import { Button } from "$lib/components/ui/button/index.js";
 import { Spinner } from "$lib/components/ui/spinner/index.js";
-import { cn } from "$lib/utils.js";
 import { enhance } from "$app/forms";
 import type { ActionData, PageData } from "./$types";
 
@@ -15,7 +15,7 @@ let submitting = $state(false);
 </script>
 
 <div class="mx-auto flex min-h-svh max-w-sm flex-col items-center justify-center px-4">
-	<a href="/" class="mb-8 flex items-center gap-2 font-medium">
+	<a href={resolve("/")} class="mb-8 flex items-center gap-2 font-medium">
 		<div class="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
 			<SquaresFourIcon class="size-4" />
 		</div>
@@ -57,7 +57,7 @@ let submitting = $state(false);
 				<p class="mt-4 text-center text-sm text-destructive">{form.message}</p>
 			{/if}
 			<p class="mt-4 text-center text-sm text-muted-foreground">
-				<a href="/signin" class="underline underline-offset-4">Back to sign in</a>
+				<a href={resolve("/signin")} class="underline underline-offset-4">Back to sign in</a>
 			</p>
 		</Card.Content>
 	</Card.Root>

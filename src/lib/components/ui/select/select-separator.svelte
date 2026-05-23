@@ -10,7 +10,7 @@ let {
 </script>
 
 <SeparatorPrimitive.Root
-	bind:this={ref}
+	bind:ref={ref}
 	data-slot="select-separator"
 	class={cn("bg-border -mx-1 h-px pointer-events-none", className)}
 	{...restProps}

@@ -6,7 +6,8 @@ import * as Card from "$lib/components/ui/card/index.js";
 import * as Table from "$lib/components/ui/table/index.js";
 import type { PageData } from "./$types";
 
-let { data, form }: { data: PageData; form: any } = $props();
+let { data, form }: { data: PageData; form: import("./$types").ActionData } =
+	$props();
 let { requests } = $derived(data);
 </script>
 
