@@ -61,7 +61,10 @@ const handleOnboardingGuard: Handle = async ({ event, resolve }) => {
 		!path.startsWith("/signup") &&
 		!path.startsWith("/verify-email") &&
 		!path.startsWith("/auth") &&
-		!path.startsWith("/api")
+		!path.startsWith("/api") &&
+		!path.startsWith("/terms") &&
+		!path.startsWith("/privacy") &&
+		!path.startsWith("/marketing")
 	) {
 		return Response.redirect(`${event.url.origin}/onboarding`, 302);
 	}
