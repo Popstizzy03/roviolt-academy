@@ -5,7 +5,6 @@ import { sendInngestEvent } from "$lib/inngest/client";
 import { auth } from "$lib/server/auth";
 import { db } from "$lib/server/db";
 import * as schema from "$lib/server/db/schema";
-import { sendAccountRestored } from "$lib/server/email";
 import { signinSchema, validateForm } from "$lib/validations";
 import type { Actions, PageServerLoad } from "./$types";
 
@@ -101,9 +100,12 @@ export const actions: Actions = {
 					userId: pendingUser.id,
 				});
 
-				void sendAccountRestored({
-					email: pendingUser.email,
-					name: pendingUser.name ?? "",
+				await sendInngestEvent("app/email.send", {
+					type: "account-restored",
+					data: {
+						email: pendingUser.email,
+						name: pendingUser.name ?? "",
+					},
 				});
 
 				if (!pendingUser.deletedAt) {

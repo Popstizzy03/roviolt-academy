@@ -2,7 +2,7 @@ import { fail, redirect } from "@sveltejs/kit";
 import { eq } from "drizzle-orm";
 import { db } from "$lib/server/db";
 import { user } from "$lib/server/db/schema";
-import { sendWelcomeEmail } from "$lib/server/email";
+import { sendInngestEvent } from "$lib/inngest/client";
 import { onboardingSchema, validateForm } from "$lib/validations";
 import type { Actions, PageServerLoad } from "./$types";
 
@@ -57,9 +57,12 @@ export const actions: Actions = {
 			})
 			.where(eq(user.id, event.locals.user.id));
 
-		void sendWelcomeEmail({
-			email: event.locals.user.email,
-			name: event.locals.user.name ?? "",
+		await sendInngestEvent("app/email.send", {
+			type: "welcome",
+			data: {
+				email: event.locals.user.email,
+				name: event.locals.user.name ?? "",
+			},
 		});
 
 		return redirect(302, "/onboarding/complete");

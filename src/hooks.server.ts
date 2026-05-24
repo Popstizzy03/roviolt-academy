@@ -7,7 +7,6 @@ import { sendInngestEvent } from "$lib/inngest/client";
 import { auth } from "$lib/server/auth";
 import { db } from "$lib/server/db";
 import { user } from "$lib/server/db/schema";
-import { sendAccountRestored } from "$lib/server/email";
 
 const handleBetterAuth: Handle = async ({ event, resolve }) => {
 	const session = await auth.api.getSession({ headers: event.request.headers });
@@ -34,9 +33,12 @@ const handleBetterAuth: Handle = async ({ event, resolve }) => {
 				userId: session.user.id,
 			});
 
-			void sendAccountRestored({
-				email: session.user.email,
-				name: session.user.name ?? "",
+			await sendInngestEvent("app/email.send", {
+				type: "account-restored",
+				data: {
+					email: session.user.email,
+					name: session.user.name ?? "",
+				},
 			});
 
 			session.user.deletionStatus = "active";

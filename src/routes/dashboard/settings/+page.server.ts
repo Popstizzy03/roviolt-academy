@@ -4,7 +4,6 @@ import { sendInngestEvent } from "$lib/inngest/client";
 import { auth } from "$lib/server/auth";
 import { db } from "$lib/server/db";
 import { account, user } from "$lib/server/db/schema";
-import { sendAccountDeletionConfirmation } from "$lib/server/email";
 import { deleteAccountSchema, validateForm } from "$lib/validations";
 import type { Actions, PageServerLoad } from "./$types";
 
@@ -68,9 +67,12 @@ export const actions: Actions = {
 
 		await sendInngestEvent("user/deletion.requested", { userId });
 
-		void sendAccountDeletionConfirmation({
-			email: event.locals.user.email,
-			name: event.locals.user.name ?? "",
+		await sendInngestEvent("app/email.send", {
+			type: "account-deletion",
+			data: {
+				email: event.locals.user.email,
+				name: event.locals.user.name ?? "",
+			},
 		});
 
 		await auth.api.signOut({

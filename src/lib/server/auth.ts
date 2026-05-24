@@ -7,10 +7,7 @@ import { getRequestEvent } from "$app/server";
 import { env } from "$env/dynamic/private";
 import { db } from "$lib/server/db";
 import * as schema from "$lib/server/db/schema";
-import {
-	sendResetPasswordEmail,
-	sendVerificationEmail,
-} from "$lib/server/email";
+import { sendInngestEvent } from "$lib/inngest/client";
 import {
 	ac,
 	admin as adminRole,
@@ -130,11 +127,14 @@ export const auth = betterAuth({
 			},
 		},
 		sendResetPassword: async ({ user, url, token }) => {
-			void sendResetPasswordEmail({
-				email: user.email,
-				url,
-				token,
-				name: user.name ?? "",
+			await sendInngestEvent("app/email.send", {
+				type: "reset-password",
+				data: {
+					email: user.email,
+					url,
+					token,
+					name: user.name ?? "",
+				},
 			});
 		},
 	},
@@ -150,11 +150,14 @@ export const auth = betterAuth({
 	},
 	emailVerification: {
 		sendVerificationEmail: async ({ user, url, token }) => {
-			void sendVerificationEmail({
-				email: user.email,
-				url,
-				token,
-				name: user.name ?? "",
+			await sendInngestEvent("app/email.send", {
+				type: "verification",
+				data: {
+					email: user.email,
+					url,
+					token,
+					name: user.name ?? "",
+				},
 			});
 		},
 		sendOnSignUp: true,
