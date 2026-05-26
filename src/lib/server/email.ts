@@ -5,6 +5,27 @@ const resend = new Resend(env.RESEND_API_KEY);
 
 const FROM = env.EMAIL_FROM || "onboarding@resend.dev";
 
+async function sendEmail(to: string, subject: string, html: string) {
+	const result = await resend.emails.send({
+		from: FROM,
+		to,
+		subject,
+		html,
+	});
+
+	if (result.error) {
+		console.error(
+			`[email] Failed to send "${subject}" to ${to}:`,
+			result.error,
+		);
+		throw new Error(
+			`Resend error [${result.error.name}]: ${result.error.message}`,
+		);
+	}
+
+	return result.data.id;
+}
+
 export async function sendVerificationEmail(params: {
 	email: string;
 	url: string;
@@ -25,12 +46,7 @@ export async function sendVerificationEmail(params: {
 </body>
 </html>`;
 
-	await resend.emails.send({
-		from: FROM,
-		to: email,
-		subject: "Verify your email",
-		html,
-	});
+	return sendEmail(email, "Verify your email", html);
 }
 
 export async function sendResetPasswordEmail(params: {
@@ -53,12 +69,7 @@ export async function sendResetPasswordEmail(params: {
 </body>
 </html>`;
 
-	await resend.emails.send({
-		from: FROM,
-		to: email,
-		subject: "Reset your password",
-		html,
-	});
+	return sendEmail(email, "Reset your password", html);
 }
 
 export async function sendAccountDeletionConfirmation(params: {
@@ -80,12 +91,11 @@ export async function sendAccountDeletionConfirmation(params: {
 </body>
 </html>`;
 
-	await resend.emails.send({
-		from: FROM,
-		to: email,
-		subject: "Account deletion scheduled — 30-day grace period",
+	return sendEmail(
+		email,
+		"Account deletion scheduled — 30-day grace period",
 		html,
-	});
+	);
 }
 
 export async function sendAccountRestored(params: {
@@ -106,12 +116,7 @@ export async function sendAccountRestored(params: {
 </body>
 </html>`;
 
-	await resend.emails.send({
-		from: FROM,
-		to: email,
-		subject: "Your account has been restored",
-		html,
-	});
+	return sendEmail(email, "Your account has been restored", html);
 }
 
 export async function sendWelcomeEmail(params: {
@@ -132,10 +137,5 @@ export async function sendWelcomeEmail(params: {
 </body>
 </html>`;
 
-	await resend.emails.send({
-		from: FROM,
-		to: email,
-		subject: "Welcome to Roviolt Academy!",
-		html,
-	});
+	return sendEmail(email, "Welcome to Roviolt Academy!", html);
 }

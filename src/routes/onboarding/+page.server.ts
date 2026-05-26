@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { db } from "$lib/server/db";
 import { user } from "$lib/server/db/schema";
 import { sendInngestEvent } from "$lib/inngest/client";
+import { getRedirectTo } from "$lib/redirect";
 import { onboardingSchema, validateForm } from "$lib/validations";
 import type { Actions, PageServerLoad } from "./$types";
 
@@ -65,6 +66,8 @@ export const actions: Actions = {
 			},
 		});
 
-		return redirect(302, "/onboarding/complete");
+		const redirectTo = getRedirectTo(event.url);
+
+		throw redirect(302, redirectTo || "/onboarding/complete");
 	},
 };

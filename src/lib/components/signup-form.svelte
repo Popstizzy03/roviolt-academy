@@ -12,10 +12,12 @@ import EyeSlashIcon from "phosphor-svelte/lib/EyeSlash";
 let {
 	class: className,
 	action = "?/signUpEmail",
+	redirectTo,
 	...restProps
 }: {
 	class?: string;
 	action?: string;
+	redirectTo?: string;
 } & { [key: string]: unknown } = $props();
 
 let submitting = $state<string | null>(null);
@@ -78,6 +80,9 @@ async function checkBreach(password: string) {
 	{...restProps}
 >
 	<Field.Group>
+		{#if redirectTo}
+			<input type="hidden" name="redirectTo" value={redirectTo} />
+		{/if}
 		<div class="flex flex-col items-center gap-1 text-center">
 			<h1 class="text-2xl font-bold">Create your account</h1>
 			<p class="text-muted-foreground text-sm text-balance">

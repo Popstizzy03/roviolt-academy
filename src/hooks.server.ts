@@ -68,7 +68,13 @@ const handleOnboardingGuard: Handle = async ({ event, resolve }) => {
 		!path.startsWith("/privacy") &&
 		!path.startsWith("/marketing")
 	) {
-		return Response.redirect(`${event.url.origin}/onboarding`, 302);
+		const url = event.url;
+		const redirectTo =
+			url.searchParams.get("redirectTo") || url.pathname + url.search;
+		return Response.redirect(
+			`${url.origin}/onboarding?redirectTo=${encodeURIComponent(redirectTo)}`,
+			302,
+		);
 	}
 
 	return resolve(event);

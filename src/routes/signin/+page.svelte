@@ -1,6 +1,7 @@
 <script lang="ts">
 import SquaresFourIcon from "phosphor-svelte/lib/SquaresFour";
 import { resolve } from "$app/paths";
+import { page } from "$app/stores";
 import LoginForm from "$lib/components/login-form.svelte";
 import * as Alert from "$lib/components/ui/alert/index.js";
 import { Button } from "$lib/components/ui/button/index.js";
@@ -8,6 +9,10 @@ import type { PageData } from "./$types";
 
 let { data, form }: { data: PageData; form: import("./$types").ActionData } =
 	$props();
+
+let redirectTo = $derived(
+	$page.url.searchParams.get("redirectTo") || undefined,
+);
 </script>
 
 <div class="grid min-h-svh lg:grid-cols-2">
@@ -40,12 +45,12 @@ let { data, form }: { data: PageData; form: import("./$types").ActionData } =
 						</Alert.Description>
 					</Alert.Root>
 					<div class="mt-6">
-						<a href={resolve("/dashboard")}>
+						<a href={form.redirectTo || "/dashboard"}>
 							<Button class="w-full">Continue to Dashboard</Button>
 						</a>
 					</div>
 				{:else}
-					<LoginForm />
+					<LoginForm redirectTo={redirectTo} />
 				{#if data?.deleted}
 					<div class="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-4 text-center text-sm text-amber-800">
 						<p>

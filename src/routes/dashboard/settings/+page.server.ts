@@ -40,11 +40,12 @@ export const actions: Actions = {
 
 		if (!credentialAccount) {
 			return fail(400, {
-				errors: {
-					password: [
-						"Your account was created using Google/GitHub. Use 'Forgot password' to set a password before deleting your account.",
-					],
+				message: "Your account was created using Google/GitHub. Use ",
+				link: {
+					href: "/forgot-password?redirectTo=/dashboard/settings",
+					text: "Forgot password",
 				},
+				messageAfter: " to set a password before deleting your account.",
 			});
 		}
 

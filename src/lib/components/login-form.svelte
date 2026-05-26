@@ -17,11 +17,13 @@ let {
 	ref = $bindable(null),
 	class: className,
 	action = "?/signInEmail",
+	redirectTo,
 	...restProps
 }: {
 	ref?: HTMLFormElement | null;
 	class?: string;
 	action?: string;
+	redirectTo?: string;
 } & { [key: string]: unknown } = $props();
 
 let id = crypto.randomUUID();
@@ -50,6 +52,9 @@ function handleEnhance({ submitter }: { submitter: HTMLElement | null }) {
 				Enter your email below to login to your account
 			</p>
 		</div>
+		{#if redirectTo}
+			<input type="hidden" name="redirectTo" value={redirectTo} />
+		{/if}
 		<Field>
 			<FieldLabel for="email-{id}">Email</FieldLabel>
 			<Input id="email-{id}" name="email" type="email" placeholder="m@example.com" required />

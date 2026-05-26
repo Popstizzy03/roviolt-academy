@@ -2,6 +2,7 @@ import { fail, redirect } from "@sveltejs/kit";
 import { APIError } from "better-auth/api";
 import { and, eq } from "drizzle-orm";
 import { sendInngestEvent } from "$lib/inngest/client";
+import { getRedirectTo, postAuthRedirect } from "$lib/redirect";
 import { auth } from "$lib/server/auth";
 import { db } from "$lib/server/db";
 import * as schema from "$lib/server/db/schema";
@@ -27,6 +28,7 @@ export const actions: Actions = {
 		}
 
 		const { email, password } = result.data;
+		const redirectTo = getRedirectTo(event.url);
 
 		try {
 			const [existingUser] = await db
@@ -66,7 +68,7 @@ export const actions: Actions = {
 				body: {
 					email,
 					password,
-					callbackURL: "/onboarding",
+					callbackURL: redirectTo || "/onboarding",
 				},
 			});
 		} catch (error) {
@@ -124,6 +126,7 @@ export const actions: Actions = {
 
 				return {
 					restored: true,
+					redirectTo,
 					daysLeft,
 					deletionDate: deletionDate.toLocaleDateString(),
 				};
@@ -132,13 +135,13 @@ export const actions: Actions = {
 			// Restore failed silently — user is logged in regardless
 		}
 
-		return redirect(302, "/onboarding");
+		return postAuthRedirect({ onboardingCompleted: true }, redirectTo);
 	},
 	signInSocial: async (event) => {
 		const formData = await event.request.formData();
 		const provider = formData.get("provider")?.toString() ?? "github";
-		const callbackURL =
-			formData.get("callbackURL")?.toString() ?? "/onboarding";
+		const redirectTo = getRedirectTo(event.url);
+		const callbackURL = redirectTo || "/onboarding";
 
 		const result = await auth.api.signInSocial({
 			body: {

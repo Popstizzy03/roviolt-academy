@@ -1,11 +1,13 @@
 import { fail, redirect } from "@sveltejs/kit";
 import { auth } from "$lib/server/auth";
+import { getRedirectTo, withRedirectTo } from "$lib/redirect";
 import { resetPasswordSchema, validateForm } from "$lib/validations";
 import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = (event) => {
 	const token = event.url.searchParams.get("token") ?? "";
-	return { token };
+	const redirectTo = getRedirectTo(event.url);
+	return { token, redirectTo };
 };
 
 export const actions: Actions = {
@@ -18,6 +20,7 @@ export const actions: Actions = {
 		}
 
 		const { token, newPassword } = result.data;
+		const redirectTo = getRedirectTo(event.url);
 
 		try {
 			await auth.api.resetPassword({
@@ -32,6 +35,6 @@ export const actions: Actions = {
 			});
 		}
 
-		return redirect(302, "/signin");
+		throw redirect(302, withRedirectTo("/signin", redirectTo));
 	},
 };

@@ -1,5 +1,6 @@
 import { fail, redirect } from "@sveltejs/kit";
 import { auth } from "$lib/server/auth";
+import { getRedirectTo, withRedirectTo } from "$lib/redirect";
 import { forgotPasswordSchema, validateForm } from "$lib/validations";
 import type { Actions, PageServerLoad } from "./$types";
 
@@ -20,11 +21,12 @@ export const actions: Actions = {
 		}
 
 		const { email } = result.data;
+		const redirectTo = getRedirectTo(event.url);
 
 		await auth.api.requestPasswordReset({
 			body: {
 				email,
-				redirectTo: "/reset-password",
+				redirectTo: withRedirectTo("/reset-password", redirectTo),
 			},
 			headers: event.request.headers,
 		});

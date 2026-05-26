@@ -1,6 +1,7 @@
 import { fail, redirect } from "@sveltejs/kit";
 import { APIError } from "better-auth/api";
 import { auth } from "$lib/server/auth";
+import { getRedirectTo } from "$lib/redirect";
 import { signupSchema, validateForm } from "$lib/validations";
 import type { Actions, PageServerLoad } from "./$types";
 import crypto from "node:crypto";
@@ -39,6 +40,7 @@ export const actions: Actions = {
 		}
 
 		const { email, password, name } = result.data;
+		const redirectTo = getRedirectTo(event.url);
 
 		if (await isPasswordBreached(password)) {
 			return fail(400, {
@@ -56,7 +58,7 @@ export const actions: Actions = {
 					email,
 					password,
 					name,
-					callbackURL: "/onboarding",
+					callbackURL: redirectTo || "/onboarding",
 				},
 			});
 		} catch (error) {
@@ -74,8 +76,8 @@ export const actions: Actions = {
 	signInSocial: async (event) => {
 		const formData = await event.request.formData();
 		const provider = formData.get("provider")?.toString() ?? "github";
-		const callbackURL =
-			formData.get("callbackURL")?.toString() ?? "/onboarding";
+		const redirectTo = getRedirectTo(event.url);
+		const callbackURL = redirectTo || "/onboarding";
 
 		const result = await auth.api.signInSocial({
 			body: {

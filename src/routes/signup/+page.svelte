@@ -1,10 +1,15 @@
 <script lang="ts">
 import SquaresFourIcon from "phosphor-svelte/lib/SquaresFour";
 import { resolve } from "$app/paths";
+import { page } from "$app/stores";
 import SignupForm from "$lib/components/signup-form.svelte";
 import type { ActionData } from "./$types";
 
 let { form }: { form: ActionData } = $props();
+
+let redirectTo = $derived(
+	$page.url.searchParams.get("redirectTo") || undefined,
+);
 </script>
 
 <div class="grid min-h-svh lg:grid-cols-2">
@@ -27,7 +32,7 @@ let { form }: { form: ActionData } = $props();
 						<p class="mt-2 text-sm text-muted-foreground">{form.message}</p>
 					</div>
 				{:else}
-					<SignupForm />
+					<SignupForm redirectTo={redirectTo} />
 					{#if form?.message}
 						<p class="mt-4 text-center text-sm text-destructive">{form.message}</p>
 					{/if}
