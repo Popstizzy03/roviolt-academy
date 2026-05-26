@@ -9,10 +9,7 @@ import type { Actions, PageServerLoad } from "./$types";
 type Role = "student" | "admin" | "instructor" | "editor" | "moderator";
 
 export const load: PageServerLoad = async (event) => {
-	if (!event.locals.user) {
-		return redirect(302, "/signin");
-	}
-
+	if (!event.locals.user) throw redirect(302, "/signin");
 	requireCan(event.locals.user, "user", "set-role");
 
 	const requests = await db

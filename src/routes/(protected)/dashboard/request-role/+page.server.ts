@@ -1,24 +1,15 @@
-import { fail, redirect } from "@sveltejs/kit";
+import { fail } from "@sveltejs/kit";
 import { and, eq } from "drizzle-orm";
 import { db } from "$lib/server/db";
 import * as schema from "$lib/server/db/schema";
 import { roleRequestSchema, validateForm } from "$lib/validations";
-import type { Actions, PageServerLoad } from "./$types";
+import type { Actions } from "./$types";
 
 const roleProgression: Record<string, string[]> = {
 	student: ["instructor"],
 	instructor: ["editor", "moderator"],
 	editor: ["admin"],
 	moderator: ["admin"],
-};
-
-export const load: PageServerLoad = async (event) => {
-	if (!event.locals.user) {
-		return redirect(302, "/signin");
-	}
-	const availableRoles =
-		roleProgression[event.locals.user.role ?? "student"] ?? [];
-	return { availableRoles, currentRole: event.locals.user.role };
 };
 
 export const actions: Actions = {

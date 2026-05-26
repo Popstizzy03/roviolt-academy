@@ -1,10 +1,6 @@
 import { redirect } from "@sveltejs/kit";
 import { auth } from "$lib/server/auth";
-import type { Actions, PageServerLoad } from "./$types";
-
-export const load: PageServerLoad = (event) => {
-	return { user: event.locals.user };
-};
+import type { Actions } from "./$types";
 
 export const actions: Actions = {
 	signOut: async (event) => {
