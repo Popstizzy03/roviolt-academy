@@ -1,8 +1,15 @@
 <script lang="ts">
 import "./layout.css";
 import { ModeWatcher } from "mode-watcher";
+import { initUserSession } from "$lib/client/state/user.svelte";
 
-let { children } = $props();
+let { data, children } = $props();
+
+const sessionState = initUserSession(data.user, data.session);
+
+$effect(() => {
+	sessionState.update(data.user, data.session);
+});
 </script>
 
 <svelte:head>

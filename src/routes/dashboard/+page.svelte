@@ -1,12 +1,14 @@
-<script lang='ts'>
-import { enhance } from "$app/forms";
-import type { PageServerData } from "./$types";
-
-let { data }: { data: PageServerData } = $props();
+<script lang="ts">
+import data from "./data.js";
+import SectionCards from "$lib/components/section-cards.svelte";
+import ChartAreaInteractive from "$lib/components/chart-area-interactive.svelte";
+import DataTable from "$lib/components/data-table.svelte";
 </script>
 
-<h1>Hi, {data.user?.name ?? "User"}!</h1>
-<p>Your user ID is {data.user?.id ?? "—"}.</p>
-<form method="post" action="?/signOut" use:enhance>
-        <button class="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition">Sign out</button>
-</form>
+<div class="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+	<SectionCards />
+	<div class="px-4 lg:px-6">
+		<ChartAreaInteractive />
+	</div>
+	<DataTable {data} />
+</div>
