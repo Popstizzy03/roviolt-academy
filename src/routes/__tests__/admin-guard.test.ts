@@ -1,50 +1,48 @@
 import { describe, it, expect } from "vitest";
 import { load } from "../(protected)/admin/+layout.server.js";
 
+function mkUser(role: string) {
+	return {
+		id: "1",
+		email: `${role}@test.com`,
+		name: `${role} User`,
+		emailVerified: true,
+		createdAt: new Date(),
+		updatedAt: new Date(),
+		role,
+	};
+}
+
 describe("(protected)/admin/+layout.server.ts", () => {
 	it("allows admin role", async () => {
-		const user = { id: "1", email: "admin@test.com", role: "admin" };
-		const result = await load({ locals: { user } });
+		const result = await load({
+			locals: { user: mkUser("admin") },
+			url: new URL("http://test.com/admin"),
+			request: { method: "GET" },
+		} as never);
 		expect(result).toEqual({});
 	});
 
-	it("blocks student role with 403", async () => {
-		const user = { id: "2", email: "student@test.com", role: "student" };
-		try {
-			await load({ locals: { user } });
-			expect.unreachable("Expected 403 error to be thrown");
-		} catch (e) {
-			expect(e.status).toBe(403);
-		}
-	});
+	function assert403(user: Record<string, unknown>) {
+		return async () => {
+			try {
+				await load({
+					locals: { user },
+					url: new URL("http://test.com/admin"),
+					request: { method: "GET" },
+				} as never);
+				expect.unreachable("Expected 403 error to be thrown");
+			} catch (e) {
+				expect((e as { status: number }).status).toBe(403);
+			}
+		};
+	}
 
-	it("blocks instructor role with 403", async () => {
-		const user = { id: "3", email: "instructor@test.com", role: "instructor" };
-		try {
-			await load({ locals: { user } });
-			expect.unreachable("Expected 403 error to be thrown");
-		} catch (e) {
-			expect(e.status).toBe(403);
-		}
-	});
+	it("blocks student role with 403", assert403(mkUser("student")));
 
-	it("blocks editor role with 403", async () => {
-		const user = { id: "4", email: "editor@test.com", role: "editor" };
-		try {
-			await load({ locals: { user } });
-			expect.unreachable("Expected 403 error to be thrown");
-		} catch (e) {
-			expect(e.status).toBe(403);
-		}
-	});
+	it("blocks instructor role with 403", assert403(mkUser("instructor")));
 
-	it("blocks moderator role with 403", async () => {
-		const user = { id: "5", email: "moderator@test.com", role: "moderator" };
-		try {
-			await load({ locals: { user } });
-			expect.unreachable("Expected 403 error to be thrown");
-		} catch (e) {
-			expect(e.status).toBe(403);
-		}
-	});
+	it("blocks editor role with 403", assert403(mkUser("editor")));
+
+	it("blocks moderator role with 403", assert403(mkUser("moderator")));
 });

@@ -1,5 +1,6 @@
-import type { Handle } from "@sveltejs/kit";
+import type { Handle, HandleServerError } from "@sveltejs/kit";
 import { sequence } from "@sveltejs/kit/hooks";
+import { sentryHandle, handleErrorWithSentry } from "@sentry/sveltekit";
 import { svelteKitHandler } from "better-auth/svelte-kit";
 import { eq } from "drizzle-orm";
 import { building } from "$app/environment";
@@ -80,4 +81,10 @@ const handleOnboardingGuard: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-export const handle: Handle = sequence(handleBetterAuth, handleOnboardingGuard);
+export const handle: Handle = sequence(
+	sentryHandle(),
+	handleBetterAuth,
+	handleOnboardingGuard,
+);
+
+export const handleError = handleErrorWithSentry() satisfies HandleServerError;

@@ -13,6 +13,7 @@
 		"format": "biome format --write",
 		"lint": "biome check --write && eslint .",
 		"test:unit": "vitest",
+		"test:server": "pnpm exec vitest run --project server",
 		"test": "npm run test:unit -- --run && npm run test:e2e",
 		"test:e2e": "playwright install && playwright test",
 		"db:push": "drizzle-kit push",
@@ -80,6 +81,7 @@
 	},
 	"dependencies": {
 		"@node-rs/argon2": "^2.0.2",
+		"@sentry/sveltekit": "^10.53.1",
 		"inngest": "^4.4.0",
 		"mode-watcher": "^1.1.0",
 		"resend": "^6.12.3"

@@ -1,10 +1,12 @@
 import { sveltekit } from "@sveltejs/kit/vite";
+import { sentrySvelteKit } from "@sentry/sveltekit";
 import tailwindcss from "@tailwindcss/vite";
 import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
 	plugins: [
+		sentrySvelteKit(),
 		tailwindcss(),
 		{
 			name: "fix-mdsvex-script",
