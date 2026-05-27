@@ -1,4 +1,4 @@
-import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, integer, jsonb, numeric, pgTable, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 
 // 1. The core user ledger with the system access roles integrated
 export const user = pgTable("user", {
@@ -85,3 +85,121 @@ export const roleRequest = pgTable("role_request", {
 	createdAt: timestamp("createdAt").notNull(),
 	updatedAt: timestamp("updatedAt").notNull(),
 });
+
+// ── Course Content ──────────────────────────────────────────────────────────
+
+export const courses = pgTable("courses", {
+	id: text("id").primaryKey(),
+	title: text("title").notNull(),
+	description: text("description"),
+	slug: text("slug").notNull().unique(),
+	thumbnail: text("thumbnail"),
+	isPublished: boolean("is_published").default(false).notNull(),
+	price: integer("price").notNull(),
+	freemiumLimit: integer("freemium_limit"),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const modules = pgTable("modules", {
+	id: text("id").primaryKey(),
+	courseId: text("course_id")
+		.notNull()
+		.references(() => courses.id, { onDelete: "cascade" }),
+	title: text("title").notNull(),
+	description: text("description"),
+	order: integer("order").notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const lessons = pgTable("lessons", {
+	id: text("id").primaryKey(),
+	moduleId: text("module_id")
+		.notNull()
+		.references(() => modules.id, { onDelete: "cascade" }),
+	title: text("title").notNull(),
+	description: text("description"),
+	order: integer("order").notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const learningBlocks = pgTable("learning_blocks", {
+	id: text("id").primaryKey(),
+	lessonId: text("lesson_id")
+		.notNull()
+		.references(() => lessons.id, { onDelete: "cascade" }),
+	type: text("type").notNull(),
+	config: jsonb("config").notNull(),
+	order: integer("order").notNull(),
+	points: integer("points").default(100).notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// ── Enrollment & Payments ───────────────────────────────────────────────────
+
+export const enrollments = pgTable(
+	"enrollments",
+	{
+		id: text("id").primaryKey(),
+		userId: text("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		courseId: text("course_id")
+			.notNull()
+			.references(() => courses.id, { onDelete: "cascade" }),
+		status: text("status").default("freemium").notNull(),
+		freemiumLessonsViewed: integer("freemium_lessons_viewed").default(0).notNull(),
+		enrolledAt: timestamp("enrolled_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at").defaultNow().notNull(),
+	},
+	(table) => ({
+		uniqueEnrollment: uniqueIndex("unique_enrollment").on(table.userId, table.courseId),
+	}),
+);
+
+export const payments = pgTable("payments", {
+	id: text("id").primaryKey(),
+	userId: text("user_id")
+		.notNull()
+		.references(() => user.id, { onDelete: "cascade" }),
+	courseId: text("course_id")
+		.notNull()
+		.references(() => courses.id),
+	gateway: text("gateway").notNull(),
+	gatewayReference: text("gateway_reference").notNull().unique(),
+	amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
+	currency: text("currency").notNull(),
+	status: text("status").notNull().default("pending"),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// ── Gamification ────────────────────────────────────────────────────────────
+
+export const userProgression = pgTable("user_progression", {
+	userId: text("user_id")
+		.primaryKey()
+		.references(() => user.id, { onDelete: "cascade" }),
+	xp: integer("xp").default(0).notNull(),
+	level: integer("level").default(1).notNull(),
+	currentStreak: integer("current_streak").default(0).notNull(),
+	longestStreak: integer("longest_streak").default(0).notNull(),
+	lastActiveAt: timestamp("last_active_at"),
+});
+
+export const blockCompletions = pgTable(
+	"block_completions",
+	{
+		id: text("id").primaryKey(),
+		userId: text("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		blockId: text("block_id")
+			.notNull()
+			.references(() => learningBlocks.id, { onDelete: "cascade" }),
+		lessonId: text("lesson_id").notNull(),
+		completedAt: timestamp("completed_at").defaultNow().notNull(),
+	},
+	(table) => ({
+		uniqueBlockCompletion: uniqueIndex("unique_block_completion").on(table.userId, table.blockId),
+	}),
+);
