@@ -1,8 +1,10 @@
 <script lang="ts">
 let {
 	config,
+	onComplete,
 }: {
 	config: { code?: string; language?: string };
+	onComplete?: () => void;
 } = $props();
 
 let code = $state(config.code || "");
@@ -75,6 +77,14 @@ function handleRun() {
 						}
 						event = "";
 					}
+				}
+
+				const lastEntry = output[output.length - 1];
+				if (
+					lastEntry?.type === "status" &&
+					lastEntry.text === "Execution complete."
+				) {
+					onComplete?.();
 				}
 			}
 			running = false;
