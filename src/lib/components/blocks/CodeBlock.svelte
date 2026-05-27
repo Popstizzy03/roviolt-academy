@@ -3,7 +3,7 @@ let {
 	config,
 	onComplete,
 }: {
-	config: { code?: string; language?: string };
+	config: { code?: string; language?: string; taskPrompt?: string };
 	onComplete?: () => void;
 } = $props();
 
@@ -11,12 +11,44 @@ let code = $state(config.code || "");
 let language = $state(config.language || "python");
 let output = $state<Array<{ type: string; text: string }>>([]);
 let running = $state(false);
+let hinting = $state(false);
+let hint: string | null = $state(null);
+
+function stderrText() {
+	return output
+		.filter((e) => e.type === "stderr")
+		.map((e) => e.text)
+		.join("\n");
+}
+
+async function handleHint() {
+	if (hinting) return;
+	hinting = true;
+	hint = null;
+	try {
+		const res = await fetch("/api/compute/tutor", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				code,
+				errorMessage: stderrText(),
+				taskPrompt: config.taskPrompt || "",
+			}),
+		});
+		const data = await res.json();
+		hint = data.hint;
+	} catch {
+		hint = "Failed to get hint. Please try again.";
+	}
+	hinting = false;
+}
 
 function handleRun() {
 	if (!code.trim() || running) return;
 
 	running = true;
 	output = [];
+	hint = null;
 
 	fetch("/api/compute/run", {
 		method: "POST",
@@ -113,6 +145,16 @@ function handleRun() {
 		>
 			{running ? "Running..." : "Run"}
 		</button>
+
+		{#if stderrText()}
+			<button
+				onclick={handleHint}
+				disabled={hinting}
+				class="rounded-lg bg-indigo-700 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
+			>
+				{hinting ? "Thinking..." : "Get AI Hint"}
+			</button>
+		{/if}
 	</div>
 
 	<textarea
@@ -137,6 +179,13 @@ function handleRun() {
 					{/if}
 				</div>
 			{/each}
+		</div>
+	{/if}
+
+	{#if hint}
+		<div class="rounded-lg border border-indigo-800/40 bg-indigo-950/20 p-4">
+			<p class="mb-2 text-sm font-semibold text-indigo-300">AI Hint</p>
+			<p class="text-sm text-zinc-300">{hint}</p>
 		</div>
 	{/if}
 </div>
