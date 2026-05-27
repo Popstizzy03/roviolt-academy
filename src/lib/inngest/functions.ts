@@ -1,7 +1,13 @@
+import crypto from "node:crypto";
 import { eq } from "drizzle-orm";
 import { auth } from "$lib/server/auth";
 import { db } from "$lib/server/db";
-import { user } from "$lib/server/db/schema";
+import {
+	user,
+	payments,
+	enrollments,
+	userProgression,
+} from "$lib/server/db/schema";
 import {
 	sendAccountDeletionConfirmation,
 	sendAccountRestored,
@@ -9,9 +15,70 @@ import {
 	sendVerificationEmail,
 	sendWelcomeEmail,
 } from "$lib/server/email";
-import { getInngest } from "./client";
+import { getInngest, sendInngestEvent } from "./client";
 
 const inngest = getInngest();
+
+export const processPaymentFulfillment = inngest.createFunction(
+	{
+		id: "payment-fulfillment",
+		retries: 3,
+		triggers: { event: "payment/process.fulfillment" },
+	},
+	async ({ event, step }) => {
+		const { reference, userId, courseId, email } = event.data as {
+			reference: string;
+			userId: string;
+			courseId: string;
+			email?: string;
+		};
+
+		await step.run("update-payment-status", async () => {
+			return await db
+				.update(payments)
+				.set({ status: "successful" })
+				.where(eq(payments.gatewayReference, reference));
+		});
+
+		await step.run("upsert-enrollment", async () => {
+			return await db
+				.insert(enrollments)
+				.values({
+					id: `enr-${crypto.randomUUID()}`,
+					userId,
+					courseId,
+					status: "active",
+					freemiumLessonsViewed: 0,
+				})
+				.onConflictDoUpdate({
+					target: [enrollments.userId, enrollments.courseId],
+					set: { status: "active" },
+				});
+		});
+
+		await step.run("init-progression", async () => {
+			return await db
+				.insert(userProgression)
+				.values({
+					userId,
+					xp: 100,
+					level: 1,
+					currentStreak: 1,
+					longestStreak: 1,
+				})
+				.onConflictDoNothing();
+		});
+
+		if (email) {
+			await step.run("send-receipt", async () => {
+				await sendInngestEvent("app/email.send", {
+					type: "welcome",
+					data: { email, name: "Student" },
+				} as never);
+			});
+		}
+	},
+);
 
 type EmailEventData =
 	| {
