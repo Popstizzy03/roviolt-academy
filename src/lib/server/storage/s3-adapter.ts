@@ -9,20 +9,37 @@ export class S3CompatibleAdapter implements StorageAdapter {
 	private publicDomain: string;
 
 	constructor() {
+		if (!env.STORAGE_ACCESS_KEY_ID)
+			throw new Error("STORAGE_ACCESS_KEY_ID is required");
+		if (!env.STORAGE_SECRET_ACCESS_KEY)
+			throw new Error("STORAGE_SECRET_ACCESS_KEY is required");
+		if (!env.STORAGE_BUCKET_NAME)
+			throw new Error("STORAGE_BUCKET_NAME is required");
+		if (!env.STORAGE_PUBLIC_DOMAIN)
+			throw new Error("STORAGE_PUBLIC_DOMAIN is required");
+
 		this.client = new S3Client({
 			region: env.STORAGE_REGION,
 			endpoint: env.STORAGE_ENDPOINT || undefined,
 			credentials: {
-				accessKeyId: env.STORAGE_ACCESS_KEY_ID!,
-				secretAccessKey: env.STORAGE_SECRET_ACCESS_KEY!,
+				accessKeyId: env.STORAGE_ACCESS_KEY_ID,
+				secretAccessKey: env.STORAGE_SECRET_ACCESS_KEY,
 			},
 			forcePathStyle: env.STORAGE_PROVIDER === "r2",
 		});
-		this.bucket = env.STORAGE_BUCKET_NAME!;
-		this.publicDomain = env.STORAGE_PUBLIC_DOMAIN!;
+		this.bucket = env.STORAGE_BUCKET_NAME;
+		this.publicDomain = env.STORAGE_PUBLIC_DOMAIN;
 	}
 
-	async getUploadUrl({ filename, contentType, size }: { filename: string; contentType: string; size: number }) {
+	async getUploadUrl({
+		filename,
+		contentType,
+		size,
+	}: {
+		filename: string;
+		contentType: string;
+		size: number;
+	}) {
 		if (size > 200 * 1024 * 1024) {
 			throw new Error("File exceeds maximum allowed size of 200MB");
 		}
@@ -34,7 +51,9 @@ export class S3CompatibleAdapter implements StorageAdapter {
 			ContentType: contentType,
 		});
 
-		const uploadUrl = await getSignedUrl(this.client, command, { expiresIn: 900 });
+		const uploadUrl = await getSignedUrl(this.client, command, {
+			expiresIn: 900,
+		});
 
 		return {
 			uploadUrl,
