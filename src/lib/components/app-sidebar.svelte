@@ -26,7 +26,7 @@ const data = {
 		},
 		{
 			title: "Courses",
-			url: "#",
+			url: "/courses",
 			icon: BookOpenIcon,
 		},
 		{
@@ -36,7 +36,7 @@ const data = {
 		},
 		{
 			title: "Settings",
-			url: "/settings",
+			url: "/dashboard/settings",
 			icon: GearIcon,
 		},
 		{
@@ -48,7 +48,7 @@ const data = {
 	navSecondary: [
 		{
 			title: "Get Help",
-			url: "#",
+			url: "/help",
 			icon: QuestionIcon,
 		},
 		{
@@ -85,7 +85,7 @@ let { ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
 			<Sidebar.MenuItem>
 				<Sidebar.MenuButton class="data-[slot=sidebar-menu-button]:!p-1.5">
 					{#snippet child({ props })}
-						<a href="##" {...props}>
+						<a href="/" {...props}>
 							<CircleIcon class="!size-5" />
 							<span class="text-base font-semibold">Roviolt Academy</span>
 						</a>

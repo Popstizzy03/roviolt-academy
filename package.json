@@ -80,6 +80,8 @@
 		"zod": "^4.4.3"
 	},
 	"dependencies": {
+		"@aws-sdk/client-s3": "^3.1053.0",
+		"@aws-sdk/s3-request-presigner": "^3.1053.0",
 		"@node-rs/argon2": "^2.0.2",
 		"@sentry/sveltekit": "^10.53.1",
 		"inngest": "^4.4.0",

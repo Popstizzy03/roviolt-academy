@@ -17,7 +17,11 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 	}
 
 	try {
-		const result = await getStorage().getUploadUrl({ filename, contentType, size });
+		const result = await getStorage().getUploadUrl({
+			filename,
+			contentType,
+			size,
+		});
 		return json(result);
 	} catch (err) {
 		if (err instanceof Error && err.message.includes("exceeds maximum")) {
