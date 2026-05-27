@@ -27,6 +27,11 @@ interface AuthUser {
 
 declare global {
 	namespace App {
+		interface Error {
+			code?: string;
+			freemiumLimit?: number;
+			freemiumLessonsViewed?: number;
+		}
 		interface Locals {
 			user?: AuthUser;
 			session?: Session;
