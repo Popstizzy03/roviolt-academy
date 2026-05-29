@@ -119,7 +119,10 @@ async function handleBuy() {
 				if (payState === "widget_open" || payState === "awaiting_mobile") {
 					const closedFrom = payState;
 					payState = "idle";
-					safeCancel(config.reference, `user_closed_from_${closedFrom}`);
+					setTimeout(
+						() => safeCancel(config.reference, `user_closed_from_${closedFrom}`),
+						0,
+					);
 				}
 			},
 		});
