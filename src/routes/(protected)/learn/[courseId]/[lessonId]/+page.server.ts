@@ -8,7 +8,11 @@ import { canAccessCourse } from "$lib/server/permissions";
 export const load: PageServerLoad = async ({ params, locals }) => {
 	if (!locals.user) throw error(401, "Unauthorized");
 
-	const hasAccess = await canAccessCourse(locals.user.id, params.courseId);
+	const hasAccess = await canAccessCourse(
+		locals.user.id,
+		params.courseId,
+		locals.user.role,
+	);
 
 	const [course] = await db
 		.select({ slug: courses.slug })

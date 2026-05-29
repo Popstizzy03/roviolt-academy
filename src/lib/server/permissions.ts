@@ -61,7 +61,14 @@ const adminStmts = {
 
 export const admin = ac.newRole(adminStmts);
 
-export async function canAccessCourse(userId: string, courseId: string) {
+const BYPASS_ROLES = ["admin", "instructor", "editor"];
+
+export async function canAccessCourse(
+	userId: string,
+	courseId: string,
+	role?: string,
+) {
+	if (role && BYPASS_ROLES.includes(role)) return true;
 	const result = await checkCourseAccess(userId, courseId);
 	return result.allowed;
 }
