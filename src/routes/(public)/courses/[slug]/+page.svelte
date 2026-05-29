@@ -16,6 +16,11 @@ function groupedLessons(moduleId: string) {
 function priceDisplay(cents: number) {
 	return cents === 0 ? "Free" : `$${(cents / 100).toFixed(2)}`;
 }
+
+const metadata = data.course.metadata as {
+	whatYoullLearn?: string[];
+	prerequisites?: string[];
+};
 </script>
 
 <div class="mx-auto max-w-4xl px-4 py-12">
@@ -28,8 +33,21 @@ function priceDisplay(cents: number) {
 			/>
 		{/if}
 
-		<h1 class="text-3xl font-bold text-zinc-100">{data.course.title}</h1>
-		<p class="mt-2 text-zinc-400">{data.course.description}</p>
+		<div class="flex flex-wrap items-start justify-between gap-4">
+			<div>
+				<h1 class="text-3xl font-bold text-zinc-100">{data.course.title}</h1>
+				{#if data.course.instructorName}
+					<p class="mt-1 text-sm text-zinc-500">Created by {data.course.instructorName}</p>
+				{/if}
+				{#if data.course.category}
+					<span class="mt-2 inline-block rounded-full bg-zinc-800 px-3 py-0.5 text-xs text-zinc-400">
+						{data.course.category}
+					</span>
+				{/if}
+			</div>
+		</div>
+
+		<p class="mt-4 text-zinc-400">{data.course.description}</p>
 
 		<div class="mt-6 flex items-center gap-4">
 			<span class="text-lg font-semibold text-zinc-200">{priceDisplay(data.course.price)}</span>
@@ -51,14 +69,43 @@ function priceDisplay(cents: number) {
 					</button>
 				</form>
 			{:else}
-				<button
+				<a
+					href="/courses/{data.course.slug}/checkout"
 					class="rounded-lg bg-amber-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-amber-500"
 				>
 					Purchase &mdash; {priceDisplay(data.course.price)}
-				</button>
+				</a>
 			{/if}
 		</div>
 	</div>
+
+	{#if metadata?.whatYoullLearn?.length}
+		<div class="mb-8 rounded-xl border border-zinc-800 bg-zinc-950/40 p-6">
+			<h2 class="mb-3 text-lg font-semibold text-zinc-200">What You'll Learn</h2>
+			<ul class="grid gap-2 sm:grid-cols-2">
+				{#each metadata.whatYoullLearn as item (item)}
+					<li class="flex items-start gap-2 text-sm text-zinc-400">
+						<span class="mt-0.5 text-amber-500">✓</span>
+						{item}
+					</li>
+				{/each}
+			</ul>
+		</div>
+	{/if}
+
+	{#if metadata?.prerequisites?.length}
+		<div class="mb-8 rounded-xl border border-zinc-800 bg-zinc-950/40 p-6">
+			<h2 class="mb-3 text-lg font-semibold text-zinc-200">Prerequisites</h2>
+			<ul class="space-y-1">
+				{#each metadata.prerequisites as item (item)}
+					<li class="flex items-start gap-2 text-sm text-zinc-400">
+						<span class="mt-0.5 text-zinc-600">▸</span>
+						{item}
+					</li>
+				{/each}
+			</ul>
+		</div>
+	{/if}
 
 	<h2 class="mb-4 text-xl font-semibold text-zinc-200">Curriculum</h2>
 

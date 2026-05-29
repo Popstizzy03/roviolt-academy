@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## [29 May 2026] — Lenco Payment Gateway Integration
+
+### Features
+- **Lenco payment widget**: Replaced hardcoded checkout flow with real Lenco payment gateway integration. New `PaymentButton.svelte` component with full state machine (`idle → initiating → widget_open → verifying → awaiting_mobile → enrolled`).
+- **Server-side API endpoints**: Added dedicated payment API routes — `POST /api/payments/initiate`, `GET /api/payments/verify/[reference]`, `POST /api/payments/cancel-by-reference/[reference]`, `POST /api/payments/abandon`, `POST /api/payments/widget-opened`, `GET /api/payments/user/[userId]`.
+- **SSE real-time status**: Added `GET /api/payments/stream/[reference]` SSE endpoint for real-time mobile money payment status updates. Gateway service at `src/lib/server/payments/payment-status-gateway.ts` emits `payment.completed`, `payment.failed`, `payment.cancelled` events.
+- **Webhook enhancements**: Webhook handler now emits SSE events for `collection.failed` and `collection.cancelled` events (not just `collection.successful`), enabling real-time feedback for all payment outcomes.
+- **Client payment library**: Added `src/lib/api/payment.ts` API wrapper, `src/lib/types/payment.ts` TypeScript interfaces, and `LencoScriptLoader.svelte` component with 12-second polling timeout.
+
+### Bug Fixes
+- **Missing email parameter (Lenco widget white screen)**: The Lenco payment widget requires the `email` field. It was not being passed in the `LencoPay.getPaid()` call, causing the widget to open as a blank white modal. Fixed by adding `email` (and optional `customer`) props to `PaymentButton.svelte`, passing user email from `locals.user.email` via the checkout page server load function.
+- **`$env/dynamic/public` reliability**: Switched to `$env/static/public` for accessing `PUBLIC_LENCO_PUBLIC_KEY` to avoid potential hydration issues where dynamic env vars might not be available.
+- **`lenco-client.ts` RequestEvent dependency**: Refactored `verifyLencoPayment()` and `initiateLencoMobileMoney()` to use native `fetch` instead of SvelteKit's `event.fetch`, making them usable from API endpoint handlers (which don't have `RequestEvent`).
+- **Webhook duplicate reference declaration**: Fixed `const reference` being declared twice in the Lenco webhook handler — moved to a single declaration before event type checks.
+- **`payments` schema mismatch**: Added `metadata` (jsonb) and `updatedAt` (timestamp) columns to the `payments` table definition. Requires `pnpm db:push` to apply.
+
+### Infrastructure
+- **pnpm binary corruption**: Fixed broken pnpm executable (`~/.local/share/pnpm/bin/pnpm`) that contained "This file intentionally left blank" instead of the actual binary. Removed the stale shim; npm-installed pnpm at the nvm path now takes precedence.
+- **`InitiatePaymentDto.userId` made optional**: The server overrides `userId` from the authenticated session regardless of client input, so the field was made optional in the type definition.
+
 ## [21 May 2026] — Initial application MVP
 
 ### Features

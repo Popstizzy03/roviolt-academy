@@ -166,7 +166,7 @@ function handleRun() {
 
 	{#if output.length > 0}
 		<div class="max-h-64 overflow-y-auto rounded-lg border border-zinc-800 bg-zinc-950 p-3 font-mono text-sm">
-			{#each output as entry, i}
+			{#each output as entry, i (i)}
 				<div class="py-0.5">
 					{#if entry.type === "stdout"}
 						<span class="text-zinc-300">{entry.text}</span>

@@ -1,12 +1,14 @@
 <script lang="ts">
 import type { PageData } from "./$types";
 import BlockDispatcher from "$lib/components/blocks/BlockDispatcher.svelte";
+import PurchaseCTA from "$lib/components/PurchaseCTA.svelte";
 
 let { data }: { data: PageData } = $props();
 
 let feedback = $state<string | null>(null);
 
-async function handleBlockComplete(blockId: string, points: number) {
+async function handleBlockComplete(blockId: string) {
+	if (!data.lesson) return;
 	try {
 		const res = await fetch("/api/progress/complete", {
 			method: "POST",
@@ -27,6 +29,7 @@ async function handleBlockComplete(blockId: string, points: number) {
 }
 </script>
 
+{#if data.isEnrolled && data.lesson}
 <div class="mx-auto max-w-4xl px-4 py-8">
 	<div class="mb-4 flex items-center justify-between">
 		<div>
@@ -43,3 +46,8 @@ async function handleBlockComplete(blockId: string, points: number) {
 	</div>
 	<BlockDispatcher blocks={data.blocks} onComplete={handleBlockComplete} />
 </div>
+{:else}
+<div class="flex h-[80vh] items-center justify-center p-8">
+	<PurchaseCTA courseId={data.courseId} courseSlug={data.courseSlug} />
+</div>
+{/if}

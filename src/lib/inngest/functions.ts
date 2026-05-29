@@ -13,6 +13,7 @@ import {
 	sendAccountRestored,
 	sendResetPasswordEmail,
 	sendVerificationEmail,
+	sendVideoReadyEmail,
 	sendWelcomeEmail,
 } from "$lib/server/email";
 import { getInngest, sendInngestEvent } from "./client";
@@ -91,7 +92,11 @@ type EmailEventData =
 	  }
 	| { type: "account-deletion"; data: { email: string; name: string } }
 	| { type: "account-restored"; data: { email: string; name: string } }
-	| { type: "welcome"; data: { email: string; name: string } };
+	| { type: "welcome"; data: { email: string; name: string } }
+	| {
+			type: "video-ready";
+			data: { email: string; name: string; courseTitle: string };
+	  };
 
 export const sendEmail = inngest.createFunction(
 	{ id: "send-email", triggers: [{ event: "app/email.send" }] },
@@ -119,6 +124,8 @@ export const sendEmail = inngest.createFunction(
 					return await sendAccountRestored(data);
 				case "welcome":
 					return await sendWelcomeEmail(data);
+				case "video-ready":
+					return await sendVideoReadyEmail(data);
 				default:
 					throw new Error(`Unknown email type: ${type}`);
 			}

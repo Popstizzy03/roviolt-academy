@@ -1,3 +1,4 @@
+import { paraglideVitePlugin } from "@inlang/paraglide-js";
 import { sveltekit } from "@sveltejs/kit/vite";
 import { sentrySvelteKit } from "@sentry/sveltekit";
 import tailwindcss from "@tailwindcss/vite";
@@ -5,6 +6,8 @@ import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
+	build: { rolldownOptions: { external: ["@sentry/profiling-node"] } },
+	ssr: { external: ["@sentry/profiling-node"] },
 	plugins: [
 		sentrySvelteKit(),
 		tailwindcss(),
@@ -18,6 +21,10 @@ export default defineConfig({
 			},
 		},
 		sveltekit(),
+		paraglideVitePlugin({
+			project: "./project.inlang",
+			outdir: "./src/lib/paraglide",
+		}),
 	],
 	test: {
 		expect: { requireAssertions: true },
@@ -41,6 +48,7 @@ export default defineConfig({
 				test: {
 					name: "server",
 					environment: "node",
+					testTimeout: 15_000,
 					include: ["src/**/*.{test,spec}.{js,ts}"],
 					exclude: ["src/**/*.svelte.{test,spec}.{js,ts}"],
 				},

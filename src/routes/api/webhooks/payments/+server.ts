@@ -2,8 +2,9 @@ import crypto from "node:crypto";
 import { error, json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import { env } from "$env/dynamic/private";
+import { eq } from "drizzle-orm";
 import { db } from "$lib/server/db";
-import { payments } from "$lib/server/db/schema";
+import { payments, processedDodoWebhooks } from "$lib/server/db/schema";
 import { sendInngestEvent } from "$lib/inngest/client";
 import {
 	verifyLencoWebhook,
@@ -13,6 +14,8 @@ import {
 	verifyDodoWebhook,
 	parseDodoMetadata,
 } from "$lib/server/payments/dodo";
+import { fulfillEnrollment } from "$lib/server/payments/orchestrator";
+import { paymentStatusGateway } from "$lib/server/payments/payment-status-gateway";
 
 type Provider = "lenco" | "dodo";
 
@@ -46,12 +49,43 @@ export const POST: RequestHandler = async ({ request, url }) => {
 
 		const payload = JSON.parse(rawBody);
 		const eventType: string = payload.event;
+		const reference: string | undefined = payload.data?.reference;
+
+		if (eventType === "collection.failed") {
+			if (reference) {
+				await db
+					.update(payments)
+					.set({ status: "failed" })
+					.where(eq(payments.gatewayReference, reference));
+
+				paymentStatusGateway.emit(reference, {
+					event: "payment.failed",
+					reference,
+					reason: payload.data?.reasonForFailure || "Payment failed",
+				});
+			}
+			return json({ received: true });
+		}
+
+		if (eventType === "collection.cancelled") {
+			if (reference) {
+				await db
+					.update(payments)
+					.set({ status: "cancelled" })
+					.where(eq(payments.gatewayReference, reference));
+
+				paymentStatusGateway.emit(reference, {
+					event: "payment.cancelled",
+					reference,
+				});
+			}
+			return json({ received: true });
+		}
 
 		if (eventType !== "collection.successful") {
 			return json({ received: true });
 		}
 
-		const reference: string | undefined = payload.data?.reference;
 		const amount: string | undefined = payload.data?.amount;
 		const currency: string | undefined = payload.data?.currency;
 
@@ -67,19 +101,32 @@ export const POST: RequestHandler = async ({ request, url }) => {
 		const { userId, courseId } = parsed;
 
 		try {
-			await db
-				.insert(payments)
-				.values({
-					id: crypto.randomUUID(),
-					userId,
-					courseId,
-					gateway: "lenco",
-					gatewayReference: reference,
-					amount,
-					currency,
-					status: "pending",
-				})
-				.onConflictDoNothing();
+			const existingPayment = await db
+				.select({ id: payments.id, status: payments.status })
+				.from(payments)
+				.where(eq(payments.gatewayReference, reference))
+				.limit(1);
+
+			const isExisting = existingPayment.length > 0;
+
+			if (!isExisting) {
+				await db
+					.insert(payments)
+					.values({
+						id: crypto.randomUUID(),
+						userId,
+						courseId,
+						gateway: "lenco",
+						gatewayReference: reference,
+						amount,
+						currency,
+						status: "pending",
+						metadata: {},
+					})
+					.onConflictDoNothing();
+			}
+
+			await fulfillEnrollment(reference);
 
 			await sendInngestEvent("payment/process.fulfillment", {
 				reference,
@@ -88,7 +135,12 @@ export const POST: RequestHandler = async ({ request, url }) => {
 				courseId,
 			});
 
-			return json({ received: true });
+			paymentStatusGateway.emit(reference, {
+				event: "payment.completed",
+				reference,
+			});
+
+			return json({ status: "success" });
 		} catch (err) {
 			console.error("[webhook/lenco] Processing error:", err);
 			throw error(500, "Internal processing error");
@@ -139,6 +191,16 @@ export const POST: RequestHandler = async ({ request, url }) => {
 		const { userId, courseId } = metadata;
 
 		try {
+			// Idempotency: record webhook-id so we never process this event twice
+			const eventId = headers["webhook-id"];
+			if (eventId) {
+				try {
+					await db.insert(processedDodoWebhooks).values({ id: eventId });
+				} catch {
+					return json({ received: true, status: "duplicate" });
+				}
+			}
+
 			await db
 				.insert(payments)
 				.values({
@@ -150,8 +212,11 @@ export const POST: RequestHandler = async ({ request, url }) => {
 					amount,
 					currency,
 					status: "pending",
+					metadata: {},
 				})
 				.onConflictDoNothing();
+
+			await fulfillEnrollment(gatewayReference);
 
 			await sendInngestEvent("payment/process.fulfillment", {
 				reference: gatewayReference,
@@ -161,7 +226,7 @@ export const POST: RequestHandler = async ({ request, url }) => {
 				email: customerEmail,
 			});
 
-			return json({ received: true });
+			return json({ status: "success" });
 		} catch (err) {
 			console.error("[webhook/dodo] Processing error:", err);
 			throw error(500, "Internal processing error");

@@ -8,7 +8,7 @@ let {
 	onComplete,
 }: {
 	blocks: Array<{ id: string; type: string; config: unknown; points: number }>;
-	onComplete?: (blockId: string, points: number) => void;
+	onComplete?: (blockId: string) => void;
 } = $props();
 </script>
 
@@ -17,17 +17,17 @@ let {
 		{#if block.type === "video"}
 			<VideoBlock
 				config={block.config as Record<string, unknown>}
-				onComplete={() => onComplete?.(block.id, block.points)}
+				onComplete={() => onComplete?.(block.id)}
 			/>
 		{:else if block.type === "reading"}
 			<ReadingBlock
 				config={block.config as Record<string, unknown>}
-				onComplete={() => onComplete?.(block.id, block.points)}
+				onComplete={() => onComplete?.(block.id)}
 			/>
 		{:else if block.type === "code"}
 			<CodeBlock
 				config={block.config as Record<string, unknown>}
-				onComplete={() => onComplete?.(block.id, block.points)}
+				onComplete={() => onComplete?.(block.id)}
 			/>
 		{:else}
 			<p class="text-zinc-500">Unknown block type: {String(block.type)}</p>

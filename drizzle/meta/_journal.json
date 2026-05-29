@@ -8,6 +8,27 @@
 			"when": 1779354027947,
 			"tag": "0000_watery_salo",
 			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "7",
+			"when": 1779879037604,
+			"tag": "0001_milky_colleen_wing",
+			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "7",
+			"when": 1779910150960,
+			"tag": "0002_lively_ravenous",
+			"breakpoints": true
+		},
+		{
+			"idx": 3,
+			"version": "7",
+			"when": 1780013157280,
+			"tag": "0003_unknown_iron_lad",
+			"breakpoints": true
 		}
 	]
 }

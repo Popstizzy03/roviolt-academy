@@ -1,5 +1,6 @@
 import { createAccessControl } from "better-auth/plugins/access";
 import { adminAc, defaultStatements } from "better-auth/plugins/admin/access";
+import { checkCourseAccess } from "$lib/server/access";
 
 const statement = {
 	...defaultStatements,
@@ -59,3 +60,8 @@ const adminStmts = {
 } as const;
 
 export const admin = ac.newRole(adminStmts);
+
+export async function canAccessCourse(userId: string, courseId: string) {
+	const result = await checkCourseAccess(userId, courseId);
+	return result.allowed;
+}

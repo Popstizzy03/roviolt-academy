@@ -87,16 +87,16 @@ describe("parseDodoMetadata", () => {
 	});
 
 	it("returns null when metadata lacks courseId", () => {
-		expect(
-			parseDodoMetadata({ metadata: { userId: "user123" } }),
-		).toBeNull();
+		expect(parseDodoMetadata({ metadata: { userId: "user123" } })).toBeNull();
 	});
 
 	it("coerces numeric values to strings", () => {
 		const data = {
 			metadata: { userId: 123, courseId: 456 },
 		};
-		const result = parseDodoMetadata(data as unknown as Record<string, unknown>);
+		const result = parseDodoMetadata(
+			data as unknown as Record<string, unknown>,
+		);
 		expect(result).toEqual({ userId: "123", courseId: "456" });
 	});
 });

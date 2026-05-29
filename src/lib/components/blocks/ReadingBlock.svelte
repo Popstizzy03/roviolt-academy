@@ -1,4 +1,6 @@
 <script lang="ts">
+import Markdown from "svelte-markdown";
+
 let {
 	config,
 	onComplete,
@@ -26,7 +28,9 @@ $effect(() => {
 </script>
 
 {#if config.content}
-	<div bind:this={container} class="prose prose-invert max-w-none">{@html config.content}</div>
+	<div bind:this={container} class="prose prose-invert max-w-none">
+		<Markdown source={config.content} />
+	</div>
 {:else}
 	<p class="text-zinc-500">No content</p>
 {/if}

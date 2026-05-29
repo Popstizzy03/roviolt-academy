@@ -2,6 +2,7 @@
 import BookOpenIcon from "phosphor-svelte/lib/BookOpen";
 import ChartBarHorizontalIcon from "phosphor-svelte/lib/ChartBarHorizontal";
 import SquaresFourIcon from "phosphor-svelte/lib/SquaresFour";
+import PencilLineIcon from "phosphor-svelte/lib/PencilLine";
 import FileDocIcon from "phosphor-svelte/lib/FileDoc";
 import FolderIcon from "phosphor-svelte/lib/Folder";
 import QuestionIcon from "phosphor-svelte/lib/Question";
@@ -16,34 +17,32 @@ import NavSecondary from "./nav-secondary.svelte";
 import NavUser from "./nav-user.svelte";
 import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 import type { ComponentProps } from "svelte";
+import { useUser } from "$lib/client/state/user.svelte.js";
+
+const { current: user } = useUser();
+
+const role = user?.role;
+const canTeach = role === "instructor" || role === "admin" || role === "editor";
 
 const data = {
 	navMain: [
-		{
-			title: "Dashboard",
-			url: "/dashboard",
-			icon: SquaresFourIcon,
-		},
-		{
-			title: "Courses",
-			url: "/courses",
-			icon: BookOpenIcon,
-		},
-		{
-			title: "Analytics",
-			url: "#",
-			icon: ChartBarHorizontalIcon,
-		},
-		{
-			title: "Settings",
-			url: "/dashboard/settings",
-			icon: GearIcon,
-		},
-		{
-			title: "Admin",
-			url: "/admin",
-			icon: UsersIcon,
-		},
+		{ title: "Dashboard", url: "/dashboard", icon: SquaresFourIcon },
+		...(canTeach
+			? [{ title: "My Courses", url: "/instructor", icon: PencilLineIcon }]
+			: []),
+		{ title: "Catalog", url: "/courses", icon: BookOpenIcon },
+		{ title: "Analytics", url: "#", icon: ChartBarHorizontalIcon },
+		{ title: "Settings", url: "/dashboard/settings", icon: GearIcon },
+		...(role === "admin"
+			? [
+					{ title: "Admin", url: "/admin", icon: UsersIcon },
+					{
+						title: "Payments",
+						url: "/admin/payments",
+						icon: ClipboardTextIcon,
+					},
+				]
+			: []),
 	],
 	navSecondary: [
 		{

@@ -1,8 +1,24 @@
 <script lang="ts">
+import { goto } from "$app/navigation";
+import { resolve } from "$app/paths";
+
 let {
 	freemiumLimit = 0,
 	freemiumLessonsViewed = 0,
-}: { freemiumLimit?: number; freemiumLessonsViewed?: number } = $props();
+	courseId,
+	courseSlug,
+}: {
+	freemiumLimit?: number;
+	freemiumLessonsViewed?: number;
+	courseId?: string;
+	courseSlug?: string;
+} = $props();
+
+function handlePurchase() {
+	if (courseSlug) {
+		goto(resolve(`/courses/${courseSlug}/checkout?courseId=${courseId}`));
+	}
+}
 </script>
 
 <div class="flex flex-col items-center gap-4 rounded-xl border border-amber-800/40 bg-amber-950/20 p-8 text-center backdrop-blur-md">
@@ -15,6 +31,7 @@ let {
 	</p>
 	<button
 		type="button"
+		onclick={handlePurchase}
 		class="mt-2 rounded-lg bg-amber-600 px-6 py-2.5 font-medium text-white transition-colors hover:bg-amber-500"
 	>
 		Purchase Course

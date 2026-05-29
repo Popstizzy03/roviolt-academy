@@ -70,6 +70,7 @@ function handleEnhance({ submitter }: { submitter: HTMLElement | null }) {
 				<Input
 					type="password"
 					name="password"
+					autocomplete="current-password"
 					placeholder="Enter your password to confirm"
 					bind:value={deletePassword}
 					required

@@ -1,4 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { canAccessCourse } from "$lib/server/permissions";
+import { db } from "$lib/server/db";
 
 const mockLimit = vi.fn();
 
@@ -11,6 +13,11 @@ vi.mock("$lib/server/db", () => ({
 				})),
 			})),
 		})),
+		query: {
+			enrollments: {
+				findFirst: vi.fn(),
+			},
+		},
 	},
 }));
 
@@ -140,5 +147,31 @@ describe("checkCourseAccess", () => {
 		const result = await checkCourseAccess(userId, courseId);
 
 		expect(result).toEqual({ allowed: false, reason: "not-enrolled" });
+	});
+});
+
+describe("Course Access Guard", () => {
+	it("should return false if no enrollment exists", async () => {
+		mockLimit.mockResolvedValueOnce([courseRow()]);
+		mockLimit.mockResolvedValueOnce([]);
+		vi.mocked(db.query.enrollments.findFirst).mockResolvedValue(undefined);
+		const result = await canAccessCourse("user123", "course456");
+		expect(result).toBe(false);
+	});
+
+	it("should return true if enrollment exists", async () => {
+		mockLimit.mockResolvedValueOnce([courseRow()]);
+		mockLimit.mockResolvedValueOnce([enrollmentRow({ status: "active" })]);
+		vi.mocked(db.query.enrollments.findFirst).mockResolvedValue({
+			id: "e1",
+			userId: "user123",
+			courseId: "course456",
+			status: "active",
+			freemiumLessonsViewed: 0,
+			enrolledAt: new Date("2024-01-01"),
+			updatedAt: new Date("2024-01-01"),
+		});
+		const result = await canAccessCourse("user123", "course456");
+		expect(result).toBe(true);
 	});
 });

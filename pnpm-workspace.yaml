@@ -1,6 +1,7 @@
 allowBuilds:
   '@hugeicons/svelte': false
   '@prisma/client': false
+  '@sentry-internal/node-cpu-profiler': true
   '@sentry/cli': true
   '@tailwindcss/oxide': true
   better-sqlite3: true

@@ -139,3 +139,24 @@ export async function sendWelcomeEmail(params: {
 
 	return sendEmail(email, "Welcome to Roviolt Academy!", html);
 }
+
+export async function sendVideoReadyEmail(params: {
+	email: string;
+	name: string;
+	courseTitle: string;
+}) {
+	const { email, name, courseTitle } = params;
+
+	const html = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: system-ui, sans-serif; padding: 2rem;">
+	<h1>Your video is ready, ${name}!</h1>
+	<p>The video in <strong>${courseTitle}</strong> has finished processing and is now ready for playback.</p>
+	<p>Your students can now view this video as part of the course curriculum.</p>
+</body>
+</html>`;
+
+	return sendEmail(email, `Video ready — ${courseTitle}`, html);
+}

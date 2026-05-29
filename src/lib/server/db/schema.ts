@@ -1,4 +1,13 @@
-import { boolean, integer, jsonb, numeric, pgTable, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import {
+	boolean,
+	integer,
+	jsonb,
+	numeric,
+	pgTable,
+	text,
+	timestamp,
+	uniqueIndex,
+} from "drizzle-orm/pg-core";
 
 // 1. The core user ledger with the system access roles integrated
 export const user = pgTable("user", {
@@ -94,34 +103,60 @@ export const courses = pgTable("courses", {
 	description: text("description"),
 	slug: text("slug").notNull().unique(),
 	thumbnail: text("thumbnail"),
+	category: text("category"),
+	instructorName: text("instructor_name"),
+	creatorId: text("creator_id").references(() => user.id),
+	metadata: jsonb("metadata")
+		.$type<Record<string, unknown>>()
+		.default({})
+		.notNull(),
 	isPublished: boolean("is_published").default(false).notNull(),
 	price: integer("price").notNull(),
+	priceZmw: integer("price_zmw"),
 	freemiumLimit: integer("freemium_limit"),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const modules = pgTable("modules", {
-	id: text("id").primaryKey(),
-	courseId: text("course_id")
-		.notNull()
-		.references(() => courses.id, { onDelete: "cascade" }),
-	title: text("title").notNull(),
-	description: text("description"),
-	order: integer("order").notNull(),
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+export const modules = pgTable(
+	"modules",
+	{
+		id: text("id").primaryKey(),
+		courseId: text("course_id")
+			.notNull()
+			.references(() => courses.id, { onDelete: "cascade" }),
+		title: text("title").notNull(),
+		description: text("description"),
+		order: integer("order").notNull(),
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+	},
+	(table) => ({
+		courseOrderIdx: uniqueIndex("course_order_idx").on(
+			table.courseId,
+			table.order,
+		),
+	}),
+);
 
-export const lessons = pgTable("lessons", {
-	id: text("id").primaryKey(),
-	moduleId: text("module_id")
-		.notNull()
-		.references(() => modules.id, { onDelete: "cascade" }),
-	title: text("title").notNull(),
-	description: text("description"),
-	order: integer("order").notNull(),
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+export const lessons = pgTable(
+	"lessons",
+	{
+		id: text("id").primaryKey(),
+		moduleId: text("module_id")
+			.notNull()
+			.references(() => modules.id, { onDelete: "cascade" }),
+		title: text("title").notNull(),
+		description: text("description"),
+		order: integer("order").notNull(),
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+	},
+	(table) => ({
+		moduleOrderIdx: uniqueIndex("module_order_idx").on(
+			table.moduleId,
+			table.order,
+		),
+	}),
+);
 
 export const learningBlocks = pgTable("learning_blocks", {
 	id: text("id").primaryKey(),
@@ -148,12 +183,17 @@ export const enrollments = pgTable(
 			.notNull()
 			.references(() => courses.id, { onDelete: "cascade" }),
 		status: text("status").default("freemium").notNull(),
-		freemiumLessonsViewed: integer("freemium_lessons_viewed").default(0).notNull(),
+		freemiumLessonsViewed: integer("freemium_lessons_viewed")
+			.default(0)
+			.notNull(),
 		enrolledAt: timestamp("enrolled_at").defaultNow().notNull(),
 		updatedAt: timestamp("updated_at").defaultNow().notNull(),
 	},
 	(table) => ({
-		uniqueEnrollment: uniqueIndex("unique_enrollment").on(table.userId, table.courseId),
+		uniqueEnrollment: uniqueIndex("unique_enrollment").on(
+			table.userId,
+			table.courseId,
+		),
 	}),
 );
 
@@ -170,7 +210,16 @@ export const payments = pgTable("payments", {
 	amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
 	currency: text("currency").notNull(),
 	status: text("status").notNull().default("pending"),
+	metadata: jsonb("metadata").default({}).notNull(),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// ── Webhook Idempotency ──────────────────────────────────────────────────────
+
+export const processedDodoWebhooks = pgTable("processed_dodo_webhooks", {
+	id: text("id").primaryKey(),
+	processedAt: timestamp("processed_at").defaultNow().notNull(),
 });
 
 // ── Gamification ────────────────────────────────────────────────────────────
@@ -200,6 +249,9 @@ export const blockCompletions = pgTable(
 		completedAt: timestamp("completed_at").defaultNow().notNull(),
 	},
 	(table) => ({
-		uniqueBlockCompletion: uniqueIndex("unique_block_completion").on(table.userId, table.blockId),
+		uniqueBlockCompletion: uniqueIndex("unique_block_completion").on(
+			table.userId,
+			table.blockId,
+		),
 	}),
 );

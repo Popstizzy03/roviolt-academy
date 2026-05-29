@@ -1,6 +1,26 @@
+import { getTextDirection } from "$lib/paraglide/runtime";
+import { paraglideMiddleware } from "$lib/paraglide/server";
 import type { Handle, HandleServerError } from "@sveltejs/kit";
 import { sequence } from "@sveltejs/kit/hooks";
-import { sentryHandle, handleErrorWithSentry } from "@sentry/sveltekit";
+import {
+	sentryHandle,
+	handleErrorWithSentry,
+	init as sentryInit,
+} from "@sentry/sveltekit";
+import { nodeProfilingIntegration } from "@sentry/profiling-node";
+import { env } from "$env/dynamic/private";
+
+sentryInit({
+	dsn: env.SENTRY_DSN,
+	tracesSampleRate: 1.0,
+	environment: env.PUBLIC_SENTRY_ENVIRONMENT || "development",
+	streamGenAiSpans: true,
+	sendDefaultPii: true,
+	integrations: [nodeProfilingIntegration()],
+	profileSessionSampleRate: 1.0,
+	profileLifecycle: "trace",
+});
+
 import { svelteKitHandler } from "better-auth/svelte-kit";
 import { eq } from "drizzle-orm";
 import { building } from "$app/environment";
@@ -29,17 +49,13 @@ const handleBetterAuth: Handle = async ({ event, resolve }) => {
 				.update(user)
 				.set({ deletionStatus: "active", deletedAt: null })
 				.where(eq(user.id, session.user.id));
-
 			await sendInngestEvent("user/deletion.cancelled", {
 				userId: session.user.id,
 			});
 
 			await sendInngestEvent("app/email.send", {
 				type: "account-restored",
-				data: {
-					email: session.user.email,
-					name: session.user.name ?? "",
-				},
+				data: { email: session.user.email, name: session.user.name ?? "" },
 			});
 
 			session.user.deletionStatus = "active";
@@ -72,6 +88,7 @@ const handleOnboardingGuard: Handle = async ({ event, resolve }) => {
 		const url = event.url;
 		const redirectTo =
 			url.searchParams.get("redirectTo") || url.pathname + url.search;
+
 		return Response.redirect(
 			`${url.origin}/onboarding?redirectTo=${encodeURIComponent(redirectTo)}`,
 			302,
@@ -81,10 +98,38 @@ const handleOnboardingGuard: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-export const handle: Handle = sequence(
+const handleParaglide: Handle = ({ event, resolve }) =>
+	paraglideMiddleware(event.request, ({ request, locale }) => {
+		event.request = request;
+
+		return resolve(event, {
+			transformPageChunk: ({ html }) =>
+				html
+					.replace("%paraglide.lang%", locale)
+					.replace("%paraglide.dir%", getTextDirection(locale)),
+		});
+	});
+
+const handleDocumentPolicy: Handle = async ({ event, resolve }) => {
+	const response = await resolve(event);
+
+	response.headers.set("Document-Policy", "js-profiling");
+
+	return response;
+};
+
+export const originalHandle: Handle = sequence(
 	sentryHandle(),
+	handleDocumentPolicy,
 	handleBetterAuth,
 	handleOnboardingGuard,
+	handleParaglide,
 );
 
 export const handleError = handleErrorWithSentry() satisfies HandleServerError;
+
+export const handle = sequence(originalHandle);
+// Ensure the admin user always has the admin role (fixes stale sessions
+// created before the admin-by-email plugin was added).
+// Auto-restore accounts during the 30-day grace period.
+// Catches both email and OAuth users on any authenticated request.

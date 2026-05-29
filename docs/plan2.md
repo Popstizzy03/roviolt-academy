@@ -418,3 +418,30 @@ Inngest receives "media/process.video" event
 ```
 
 This chain is fully observable in the Inngest dashboard — each step shows timing, retries, and logs. 
+
+---
+
+### Lenco Payment Implementation Fixes
+
+Based on the Lenco documentation and the current codebase state, there is a divergence between the documented plan (`PAYMENT_IMPLEMENTATION.md`) and the actual implementation in `src/routes/(public)/courses/[slug]/checkout/+page.svelte`.
+
+**The Root Cause:**
+1. **Mismatch in Flow:** `PAYMENT_IMPLEMENTATION.md` specifies using the **Client-Side Widget** (`inline.js` -> `LencoPay.getPaid`). However, the codebase uses a **Server-Side API** approach calling `/collections/mobile-money` via a SvelteKit form action.
+2. **Environment Variables Bug:** In `src/lib/server/payments/lenco-client.ts`, the code uses `process.env.LENCO_API_TOKEN` instead of SvelteKit's `$env/dynamic/private`. This causes the token to be undefined in many SvelteKit contexts, failing the API call silently or throwing an unhandled exception (which Sentry previously missed).
+
+**The Solution:**
+To align with best practices and the original design doc, we should revert to the **Client-Side Widget Flow**.
+
+1. **Frontend Update (`checkout/+page.svelte`):**
+   - Remove the `method="POST"` form action that calls the backend directly for Lenco.
+   - Add a `<svelte:head>` or dynamic script loader for `https://pay.lenco.co/js/v1/inline.js` (and the sandbox equivalent).
+   - On checkout click, invoke `LencoPay.getPaid({ key, reference, amount, customer, onSuccess, ... })`.
+2. **Backend Verification (`/api/payments/verify`):**
+   - When the widget triggers `onSuccess`, it returns a reference.
+   - The frontend makes a `GET` request to our server (`/api/payments/verify/{reference}`).
+   - The server calls `GET https://api.lenco.co/access/v2/collections/status/{reference}` to securely confirm the payment.
+   - If successful, the server creates the enrollment (`fulfillEnrollment`) and responds with success.
+3. **Environment Variables:**
+   - Migrate `process.env.*` in `lenco-client.ts` to use `$env/dynamic/private` to ensure the API tokens are securely and reliably accessed in SvelteKit.
+4. **Webhooks:**
+   - Ensure the `/api/payments/webhook` endpoint is listening for `collection.successful` to catch mobile-money payments that complete asynchronously after the user closes the widget.

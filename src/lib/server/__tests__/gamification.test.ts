@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const mockLimit = vi.fn();
 const mockInsert = vi.fn();
@@ -29,11 +29,6 @@ const lessonId = "lesson-1";
 describe("completeBlock", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		vi.useFakeTimers();
-	});
-
-	afterEach(() => {
-		vi.useRealTimers();
 	});
 
 	it("returns alreadyCompleted when block already completed", async () => {
