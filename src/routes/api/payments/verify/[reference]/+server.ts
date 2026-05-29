@@ -80,7 +80,7 @@ export const GET: RequestHandler = async ({ params }) => {
 			.update(payments)
 			.set({
 				status: paymentStatus,
-				metadata: sql`jsonb_build_object('lencoPaymentId', ${lencoData?.id || null})`,
+				metadata: sql`jsonb_build_object('lencoPaymentId', ${lencoData?.id || null}::text)`,
 			})
 			.where(
 				and(

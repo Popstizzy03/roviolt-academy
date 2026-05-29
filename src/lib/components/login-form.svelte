@@ -57,7 +57,7 @@ function handleEnhance({ submitter }: { submitter: HTMLElement | null }) {
 		{/if}
 		<Field>
 			<FieldLabel for="email-{id}">Email</FieldLabel>
-			<Input id="email-{id}" name="email" type="email" placeholder="m@example.com" required />
+			<Input id="email-{id}" name="email" type="email" placeholder="m@example.com" autocomplete="email" required />
 		</Field>
 		<Field>
 			<div class="flex items-center">
@@ -66,7 +66,7 @@ function handleEnhance({ submitter }: { submitter: HTMLElement | null }) {
 				Forgot your password?
 			</a>
 			</div>
-			<Input id="password-{id}" name="password" type="password" required />
+			<Input id="password-{id}" name="password" type="password" autocomplete="current-password" required />
 		</Field>
 		<Field>
 			<Button type="submit" disabled={submitting !== null}>

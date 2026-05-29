@@ -16,7 +16,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			.set({
 				status: "cancelled",
 				metadata: reason
-					? sql`COALESCE(${payments.metadata}, '{}'::jsonb) || jsonb_build_object('cancelledReason', ${reason})`
+					? sql`COALESCE(${payments.metadata}, '{}'::jsonb) || jsonb_build_object('cancelledReason', ${reason}::text)`
 					: payments.metadata,
 			})
 			.where(
@@ -28,10 +28,24 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			);
 	} catch (e) {
 		console.error(
-			"Failed to abandon payment:",
-			e instanceof Error ? e.cause : e,
+			"Failed to abandon payment with metadata, retrying without:",
+			e,
 		);
-		throw error(500, "Failed to abandon payment");
+		try {
+			await db
+				.update(payments)
+				.set({ status: "cancelled" })
+				.where(
+					and(
+						eq(payments.gatewayReference, reference),
+						eq(payments.userId, locals.user.id),
+						sql`${payments.status} IN ('initiated', 'pending')`,
+					),
+				);
+		} catch (e2) {
+			console.error("Failed to abandon payment even without metadata:", e2);
+			throw error(500, "Failed to abandon payment");
+		}
 	}
 
 	return json({ success: true });
